@@ -233,6 +233,7 @@ class Database:
                 ) sub_counts ON (
                     p.id = sub_counts.profesor_sustituto_id COLLATE NOCASE
                     OR (p.id = 'jos7' AND sub_counts.profesor_sustituto_id COLLATE NOCASE = 'colivares')
+                    OR (p.id = 'ipena' AND sub_counts.profesor_sustituto_id COLLATE NOCASE IN ('fpriego', 'feli', 'felicitacion_priego', 'felicitacionpriego'))
                     OR (p.id = 'cduerto' AND sub_counts.profesor_sustituto_id COLLATE NOCASE = 'cdue1')
                 )
                 WHERE 1=1
@@ -263,6 +264,8 @@ class Database:
     def get_teacher(self, teacher_id: str) -> Optional[Teacher]:
         if teacher_id and teacher_id.lower() in ["colivares", "casandra_olivares"]:
             teacher_id = "jos7"
+        if teacher_id and teacher_id.lower() in ["fpriego", "feli", "feli_priego", "felicitacion_priego", "felicitacionpriego"]:
+            teacher_id = "ipena"
         with self._get_connection() as conn:
             cur = conn.cursor()
             query = """
@@ -277,6 +280,7 @@ class Database:
                 ) sub_counts ON (
                     p.id = sub_counts.profesor_sustituto_id COLLATE NOCASE
                     OR (p.id = 'jos7' AND sub_counts.profesor_sustituto_id COLLATE NOCASE = 'colivares')
+                    OR (p.id = 'ipena' AND sub_counts.profesor_sustituto_id COLLATE NOCASE IN ('fpriego', 'feli', 'felicitacion_priego', 'felicitacionpriego'))
                     OR (p.id = 'cduerto' AND sub_counts.profesor_sustituto_id COLLATE NOCASE = 'cdue1')
                 )
                 WHERE p.id = ? COLLATE NOCASE
@@ -317,6 +321,8 @@ class Database:
     def update_teacher_substitution_count(self, teacher_id: str, delta: int = 1):
         if teacher_id and teacher_id.lower() in ["colivares", "casandra_olivares"]:
             teacher_id = "jos7"
+        if teacher_id and teacher_id.lower() in ["fpriego", "feli", "feli_priego", "felicitacion_priego", "felicitacionpriego"]:
+            teacher_id = "ipena"
         with self._get_connection() as conn:
             conn.execute("""
                 UPDATE profesores
@@ -380,6 +386,8 @@ class Database:
     def get_schedule_for_teacher(self, teacher_id: str) -> List[ScheduleItem]:
         if teacher_id and teacher_id.lower() in ["colivares", "casandra_olivares"]:
             teacher_id = "jos7"
+        if teacher_id and teacher_id.lower() in ["fpriego", "feli", "feli_priego", "felicitacion_priego", "felicitacionpriego"]:
+            teacher_id = "ipena"
         with self._get_connection() as conn:
             cur = conn.cursor()
             cur.execute("""
@@ -405,6 +413,8 @@ class Database:
     def get_slot_activity_for_teacher(self, teacher_id: str, dia_semana: int, periodo_id: str) -> Optional[ScheduleItem]:
         if teacher_id and teacher_id.lower() in ["colivares", "casandra_olivares"]:
             teacher_id = "jos7"
+        if teacher_id and teacher_id.lower() in ["fpriego", "feli", "feli_priego", "felicitacion_priego", "felicitacionpriego"]:
+            teacher_id = "ipena"
         with self._get_connection() as conn:
             cur = conn.cursor()
             cur.execute("""
@@ -515,11 +525,13 @@ class Database:
                     SELECT COUNT(*) FROM sustituciones 
                     WHERE (profesor_sustituto_id = profesores.id COLLATE NOCASE
                            OR (profesores.id = 'jos7' AND profesor_sustituto_id COLLATE NOCASE = 'colivares')
+                           OR (profesores.id = 'ipena' AND profesor_sustituto_id COLLATE NOCASE IN ('fpriego', 'feli', 'felicitacion_priego', 'felicitacionpriego'))
                            OR (profesores.id = 'cduerto' AND profesor_sustituto_id COLLATE NOCASE = 'cdue1'))
                       AND estado != 'CANCELADA'
                 )
                 WHERE id = ? COLLATE NOCASE
                    OR (id = 'jos7' AND ? COLLATE NOCASE = 'colivares')
+                   OR (id = 'ipena' AND ? COLLATE NOCASE IN ('fpriego', 'feli', 'felicitacion_priego', 'felicitacionpriego'))
                    OR (id = 'cduerto' AND ? COLLATE NOCASE = 'cdue1')
             """, (record.profesor_sustituto_id, record.profesor_sustituto_id, record.profesor_sustituto_id))
         
@@ -543,11 +555,13 @@ class Database:
                     SELECT COUNT(*) FROM sustituciones 
                     WHERE (profesor_sustituto_id = profesores.id COLLATE NOCASE
                            OR (profesores.id = 'jos7' AND profesor_sustituto_id COLLATE NOCASE = 'colivares')
+                           OR (profesores.id = 'ipena' AND profesor_sustituto_id COLLATE NOCASE IN ('fpriego', 'feli', 'felicitacion_priego', 'felicitacionpriego'))
                            OR (profesores.id = 'cduerto' AND profesor_sustituto_id COLLATE NOCASE = 'cdue1'))
                       AND estado != 'CANCELADA'
                 )
                 WHERE id = ? COLLATE NOCASE
                    OR (id = 'jos7' AND ? COLLATE NOCASE = 'colivares')
+                   OR (id = 'ipena' AND ? COLLATE NOCASE IN ('fpriego', 'feli', 'felicitacion_priego', 'felicitacionpriego'))
                    OR (id = 'cduerto' AND ? COLLATE NOCASE = 'cdue1')
             """, (sustituto_id, sustituto_id, sustituto_id))
 

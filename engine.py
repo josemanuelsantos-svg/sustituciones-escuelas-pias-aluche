@@ -156,7 +156,7 @@ class SubstitutionEngine:
             else:
                 # ============================================================
                 # APLICACIÓN INTERNA DEL ORDEN OFICIAL (PRIMARIA)
-                # 1º Casandra Olivares (primera línea) e Isabel Peña
+                # 1º Casandra Olivares (primera línea) y Feli Priego
                 # 2º Carmen, Pilar F., Pilar P., Cristina D., Paula G.
                 # 3º Bea y Rubén
                 # 4º Jose Antonio
@@ -166,7 +166,7 @@ class SubstitutionEngine:
                 if pid in ["jos7", "colivares"]:
                     puntuacion = 1000.0
                     motivos.append("Docente disponible")
-                elif pid == "ipena":
+                elif pid in ["ipena", "fpriego", "feli", "felicitacion_priego", "felicitacionpriego"]:
                     puntuacion = 999.0
                     motivos.append("Docente disponible")
                 elif pid == "m654":

@@ -60,6 +60,8 @@ PROFESORES_INFO = {
     "D558":  {"nombre": "David Sagaseta Jiménez", "depto": "Educación Física", "etapa": "Primaria"},
     "FRA0":  {"nombre": "Francisco Javier Félix Fernández", "depto": "Religión", "etapa": "Primaria"},
     "IHID0": {"nombre": "Isabel Hidalgo Castañeda", "depto": "Tutoría / General", "etapa": "Primaria"},
+    "IPENA": {"nombre": "Feli Priego", "depto": "Horario de Apoyo", "etapa": "Primaria"},
+    "FPRIEGO": {"nombre": "Feli Priego", "depto": "Horario de Apoyo", "etapa": "Primaria"},
     "J326":  {"nombre": "Julia Rodríguez Gutiérrez", "depto": "Tutoría / General", "etapa": "Primaria"},
     "J414":  {"nombre": "Jose Antonio Utrillas Sánchez", "depto": "Tutoría / General", "etapa": "Primaria"},
     "J784":  {"nombre": "Juan Antonio Alfonso Pizarro", "depto": "Educación Física / General", "etapa": "Primaria"},

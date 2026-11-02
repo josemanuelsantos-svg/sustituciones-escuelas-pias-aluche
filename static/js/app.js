@@ -37,6 +37,8 @@ const ORDEN_PRIORIDAD_PRIMARIA = {
   "jos7":      { orden: 1, nivel: "Disponible", badge: "bg-slate-100 text-slate-700 border-slate-200 font-medium", icon: "✓" },
   "colivares": { orden: 1, nivel: "Disponible", badge: "bg-slate-100 text-slate-700 border-slate-200 font-medium", icon: "✓" },
   "ipena":     { orden: 2, nivel: "Disponible", badge: "bg-slate-100 text-slate-700 border-slate-200 font-medium", icon: "✓" },
+  "fpriego":   { orden: 2, nivel: "Disponible", badge: "bg-slate-100 text-slate-700 border-slate-200 font-medium", icon: "✓" },
+  "feli":      { orden: 2, nivel: "Disponible", badge: "bg-slate-100 text-slate-700 border-slate-200 font-medium", icon: "✓" },
   "m654":      { orden: 3, nivel: "Disponible", badge: "bg-slate-100 text-slate-700 border-slate-200 font-medium", icon: "✓" },
   "p740":      { orden: 4, nivel: "Disponible", badge: "bg-slate-100 text-slate-700 border-slate-200 font-medium", icon: "✓" },
   "mar1":      { orden: 5, nivel: "Disponible", badge: "bg-slate-100 text-slate-700 border-slate-200 font-medium", icon: "✓" },
@@ -2045,9 +2047,9 @@ function cargarEjemploJSON() {
     "profesores": [
       {
         "id": "ipena",
-        "nombre": "Isabel Peña Escudero",
+        "nombre": "Feli Priego",
         "telefono": "",
-        "email": "isabelpena@sanbuenaventura.org",
+        "email": "felicitacionpriego@sanbuenaventura.org",
         "departamento": "Primaria",
         "etapa": "Primaria",
         "activo": true,
