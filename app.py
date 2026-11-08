@@ -301,6 +301,172 @@ def search_substitutes_multiple():
         "tramos_evaluados": tramos_evaluados
     })
 
+@app.route("/api/buscar-sustitutos-rango", methods=["POST"])
+def search_substitutes_range():
+    """
+    Busca y clasifica sustitutos para un profesor ausente a lo largo de un rango de fechas
+    (bajas médicas, permisos, excursiones), aplicando rotación equitativa intradía e interdías.
+    """
+    data = request.json or {}
+    fecha_inicio_str = data.get("fecha_inicio")
+    fecha_fin_str = data.get("fecha_fin")
+    profesor_ausente_id = data.get("profesor_ausente_id")
+    periodos_lectivos = data.get("periodos", ["1H", "2H", "3H", "4H", "5H"])
+
+    if not fecha_inicio_str or not fecha_fin_str or not profesor_ausente_id:
+        return jsonify({"error": "Faltan datos obligatorios (fecha_inicio, fecha_fin, profesor_ausente_id)."}), 400
+
+    try:
+        f_inicio = datetime.strptime(fecha_inicio_str, "%Y-%m-%d").date()
+        f_fin = datetime.strptime(fecha_fin_str, "%Y-%m-%d").date()
+    except Exception:
+        return jsonify({"error": "Formato de fechas inválido (debe ser YYYY-MM-DD)."}), 400
+
+    if f_inicio > f_fin:
+        return jsonify({"error": "La fecha de inicio debe ser anterior o igual a la fecha de fin."}), 400
+
+    # Límite de seguridad: máximo 45 días
+    if (f_fin - f_inicio).days > 45:
+        return jsonify({"error": "El rango no puede exceder de 45 días naturales."}), 400
+
+    ausente = db.get_teacher(profesor_ausente_id)
+    if not ausente:
+        return jsonify({"error": "Profesor ausente no encontrado."}), 404
+
+    dias_evaluados = []
+    virtual_loads = {}  # Mantiene la rotación acumulada a lo largo de toda la baja
+    curr = f_inicio
+    dias_nombres = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
+
+    while curr <= f_fin:
+        if curr.weekday() < 5:  # Solo días lectivos (Lunes a Viernes)
+            dia_str = curr.isoformat()
+            dia_semana = curr.weekday()
+            
+            # Buscar sustituciones ya existentes para este día y ausente
+            subs_dia = [
+                s for s in db.get_substitutions()
+                if s.fecha == dia_str and s.profesor_ausente_id == profesor_ausente_id and s.estado != "CANCELADA"
+            ]
+            ya_asignadas_map = {s.periodo_id: s.to_dict() for s in subs_dia}
+
+            tramos_del_dia = []
+            for pid in periodos_lectivos:
+                slot = db.get_time_slot(pid)
+                if not slot:
+                    continue
+
+                item = db.get_slot_activity_for_teacher(profesor_ausente_id, dia_semana, pid)
+                tiene_clase = (item is not None and item.tipo_actividad == ActivityType.LECTIVA)
+                ya_asignada = ya_asignadas_map.get(pid)
+
+                materia_final = item.materia if item else ""
+                aula_final = item.aula or item.curso_grupo if item else ""
+                grupo_final = item.curso_grupo or item.aula if item else ""
+
+                evaluacion = engine.find_candidates(
+                    fecha_str=dia_str,
+                    periodo_id=pid,
+                    profesor_ausente_id=profesor_ausente_id,
+                    materia=materia_final,
+                    aula=aula_final,
+                    extra_loads=virtual_loads
+                )
+
+                rec = evaluacion.get("recomendado")
+                if tiene_clase and not ya_asignada and rec:
+                    rec_id = rec["profesor"]["id"]
+                    virtual_loads[rec_id] = virtual_loads.get(rec_id, 0) + 1
+
+                tramos_del_dia.append({
+                    "periodo_id": pid,
+                    "periodo_nombre": slot.nombre,
+                    "hora_inicio": slot.hora_inicio,
+                    "hora_fin": slot.hora_fin,
+                    "tiene_clase_lectiva": tiene_clase,
+                    "tipo_actividad_ausente": item.tipo_actividad if item else "LIBRE",
+                    "descripcion_ausente": item.descripcion if item else "Hueco libre",
+                    "aula": aula_final,
+                    "curso_grupo": grupo_final,
+                    "materia": materia_final,
+                    "ya_asignada": ya_asignada,
+                    "mensaje_criterio": evaluacion.get("mensaje_criterio", ""),
+                    "recomendado": evaluacion.get("recomendado"),
+                    "candidatos": evaluacion.get("candidatos", []),
+                    "no_disponibles": evaluacion.get("no_disponibles", [])
+                })
+
+            total_lectivas = sum(1 for t in tramos_del_dia if t["tiene_clase_lectiva"])
+            dias_evaluados.append({
+                "fecha": dia_str,
+                "dia_semana": dia_semana,
+                "dia_nombre": dias_nombres[dia_semana],
+                "total_horas_lectivas": total_lectivas,
+                "tramos_evaluados": tramos_del_dia
+            })
+
+        curr += timedelta(days=1)
+
+    return jsonify({
+        "fecha_inicio": fecha_inicio_str,
+        "fecha_fin": fecha_fin_str,
+        "total_dias_lectivos": len(dias_evaluados),
+        "profesor_ausente": ausente.to_dict(),
+        "dias": dias_evaluados
+    })
+
+@app.route("/api/asignar-sustituciones-rango", methods=["POST"])
+def assign_substitutions_range():
+    """Asigna todas las sustituciones de un rango de fechas (baja/excursión) de una sola vez."""
+    data = request.json or {}
+    profesor_ausente_id = data.get("profesor_ausente_id")
+    dias_asignaciones = data.get("dias_asignaciones", [])
+    que_hacer_global = data.get("que_hacer", "")
+
+    if not profesor_ausente_id or not dias_asignaciones:
+        return jsonify({"error": "Faltan datos obligatorios para la asignación por rango."}), 400
+
+    total_asignadas = 0
+    errores = []
+
+    for dia_obj in dias_asignaciones:
+        fecha = dia_obj.get("fecha")
+        asignaciones = dia_obj.get("asignaciones", [])
+        if not fecha or not asignaciones:
+            continue
+
+        for item in asignaciones:
+            periodo_id = item.get("periodo_id")
+            profesor_sustituto_id = item.get("profesor_sustituto_id")
+            if not periodo_id or not profesor_sustituto_id:
+                continue
+
+            aula = item.get("aula") or item.get("curso_grupo") or ""
+            curso_grupo = item.get("curso_grupo") or item.get("aula") or ""
+            materia = item.get("materia") or ""
+            qh = item.get("que_hacer") if item.get("que_hacer") is not None else que_hacer_global
+
+            try:
+                _crear_registro_sustitucion(
+                    fecha=fecha,
+                    periodo_id=periodo_id,
+                    profesor_ausente_id=profesor_ausente_id,
+                    profesor_sustituto_id=profesor_sustituto_id,
+                    aula=aula,
+                    curso_grupo=curso_grupo,
+                    materia=materia,
+                    que_hacer=qh
+                )
+                total_asignadas += 1
+            except ValueError as e:
+                errores.append({"fecha": fecha, "periodo_id": periodo_id, "error": str(e)})
+
+    return jsonify({
+        "success": True,
+        "total_asignadas": total_asignadas,
+        "errores": errores
+    })
+
 def _crear_registro_sustitucion(fecha, periodo_id, profesor_ausente_id, profesor_sustituto_id, aula, curso_grupo, materia, que_hacer):
     """Crea y persiste un registro de sustitución con el campo 'Qué deben hacer en su hora'."""
     ausente = db.get_teacher(profesor_ausente_id)
@@ -444,6 +610,157 @@ def assign_substitutions_multiple():
         "success": True,
         "asignadas": asignadas,
         "errores": errores
+    })
+
+@app.route("/api/estadisticas-equidad", methods=["GET"])
+def get_equity_statistics():
+    """Devuelve estadísticas analíticas avanzadas de equidad y distribución de sustituciones."""
+    trimestre = request.args.get("trimestre", "todo")
+    fecha_inicio = request.args.get("fecha_inicio")
+    fecha_fin = request.args.get("fecha_fin")
+    
+    # Determinar rango según trimestre escolar (curso actual)
+    año_actual = date.today().year
+    # Si estamos a finales de año (ej. 2026), el curso es 2026/2027
+    año_inicio_curso = año_actual if date.today().month >= 9 else año_actual - 1
+    año_fin_curso = año_inicio_curso + 1
+
+    if not fecha_inicio or not fecha_fin:
+        if trimestre == "1":
+            fecha_inicio = f"{año_inicio_curso}-09-01"
+            fecha_fin = f"{año_inicio_curso}-12-31"
+            nombre_periodo = f"1er Trimestre ({año_inicio_curso})"
+        elif trimestre == "2":
+            fecha_inicio = f"{año_fin_curso}-01-01"
+            fecha_fin = f"{año_fin_curso}-03-31"
+            nombre_periodo = f"2º Trimestre ({año_fin_curso})"
+        elif trimestre == "3":
+            fecha_inicio = f"{año_fin_curso}-04-01"
+            fecha_fin = f"{año_fin_curso}-06-30"
+            nombre_periodo = f"3er Trimestre ({año_fin_curso})"
+        else:
+            fecha_inicio = f"{año_inicio_curso}-09-01"
+            fecha_fin = f"{año_fin_curso}-06-30"
+            nombre_periodo = f"Todo el Curso {año_inicio_curso}/{año_fin_curso}"
+    else:
+        nombre_periodo = f"Del {fecha_inicio} al {fecha_fin}"
+
+    subs = db.get_substitutions()
+    subs_periodo = [
+        s for s in subs
+        if s.estado != "CANCELADA" and (not fecha_inicio or s.fecha >= fecha_inicio) and (not fecha_fin or s.fecha <= fecha_fin)
+    ]
+
+    all_teachers = db.get_teachers()
+    stats_por_profesor = {}
+    for t in all_teachers:
+        stats_por_profesor[t.id] = {
+            "id": t.id,
+            "nombre": t.nombre,
+            "etapa": t.etapa,
+            "departamento": t.departamento,
+            "total_periodo": 0,
+            "guardias": 0,
+            "reuniones": 0,
+            "apoyos": 0,
+            "sustituciones_historicas": t.sustituciones_realizadas
+        }
+
+    total_guardias = 0
+    total_reuniones = 0
+    total_apoyos = 0
+    por_etapa = {"Primaria": 0, "Infantil": 0}
+    por_dia_semana = {"Lunes": 0, "Martes": 0, "Miércoles": 0, "Jueves": 0, "Viernes": 0}
+    dias_nombres = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]
+    por_tramo = {"1H": 0, "2H": 0, "3H": 0, "4H": 0, "5H": 0}
+
+    for s in subs_periodo:
+        sust_id = s.profesor_sustituto_id
+        if sust_id not in stats_por_profesor:
+            # En caso de id con mayúsculas/minúsculas
+            for tid in stats_por_profesor:
+                if tid.lower() == sust_id.lower():
+                    sust_id = tid
+                    break
+
+        # Identificar actividad original del sustituto a esa hora
+        slot_act = db.get_slot_activity_for_teacher(sust_id, s.dia_semana, s.periodo_id)
+        tipo = "REUNION"
+        if slot_act:
+            if slot_act.tipo_actividad == ActivityType.GUARDIA:
+                tipo = "GUARDIA"
+            elif slot_act.tipo_actividad == ActivityType.APOYO:
+                tipo = "APOYO"
+            else:
+                tipo = "REUNION"
+
+        if tipo == "GUARDIA":
+            total_guardias += 1
+        elif tipo == "APOYO":
+            total_apoyos += 1
+        else:
+            total_reuniones += 1
+
+        if sust_id in stats_por_profesor:
+            stats_por_profesor[sust_id]["total_periodo"] += 1
+            if tipo == "GUARDIA":
+                stats_por_profesor[sust_id]["guardias"] += 1
+            elif tipo == "APOYO":
+                stats_por_profesor[sust_id]["apoyos"] += 1
+            else:
+                stats_por_profesor[sust_id]["reuniones"] += 1
+
+        # Etapa del ausente
+        ausente = db.get_teacher(s.profesor_ausente_id)
+        if ausente:
+            etapa_aus = ausente.etapa if ausente.etapa in por_etapa else "Primaria"
+            por_etapa[etapa_aus] = por_etapa.get(etapa_aus, 0) + 1
+
+        if 0 <= s.dia_semana < 5:
+            d_nom = dias_nombres[s.dia_semana]
+            por_dia_semana[d_nom] = por_dia_semana.get(d_nom, 0) + 1
+
+        if s.periodo_id in por_tramo:
+            por_tramo[s.periodo_id] += 1
+
+    ranking = list(stats_por_profesor.values())
+    ranking.sort(key=lambda x: (x["total_periodo"], x["sustituciones_historicas"]), reverse=True)
+
+    # Cálculo del índice de equidad (0-100%): basado en la desviación estándar de cargas
+    total_subs = len(subs_periodo)
+    if total_subs > 0 and len(ranking) > 0:
+        cargas = [p["total_periodo"] for p in ranking]
+        media = sum(cargas) / len(cargas)
+        varianza = sum((c - media) ** 2 for c in cargas) / len(cargas)
+        desv = varianza ** 0.5
+        # Cuanto menor sea la desviación respecto a la media, mayor es la equidad
+        indice_equidad = max(60, min(100, round(100 - (desv * 8))))
+    else:
+        indice_equidad = 100
+
+    pct_guardias = round((total_guardias / total_subs) * 100) if total_subs > 0 else 0
+    pct_reuniones = round((total_reuniones / total_subs) * 100) if total_subs > 0 else 0
+    pct_apoyos = round((total_apoyos / total_subs) * 100) if total_subs > 0 else 0
+
+    return jsonify({
+        "periodo_nombre": nombre_periodo,
+        "trimestre": trimestre,
+        "fecha_inicio": fecha_inicio,
+        "fecha_fin": fecha_fin,
+        "kpi": {
+            "total_sustituciones": total_subs,
+            "total_guardias": total_guardias,
+            "total_reuniones": total_reuniones,
+            "total_apoyos": total_apoyos,
+            "porcentaje_guardias": pct_guardias,
+            "porcentaje_reuniones": pct_reuniones,
+            "porcentaje_apoyos": pct_apoyos,
+            "indice_equidad": indice_equidad
+        },
+        "ranking_profesores": ranking,
+        "por_etapa": por_etapa,
+        "por_dia_semana": por_dia_semana,
+        "por_tramo": por_tramo
     })
 
 @app.route("/api/sustituciones", methods=["GET"])

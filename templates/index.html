@@ -14,6 +14,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Phosphor Icons -->
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Chart.js para analíticas y gráficas de equidad -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -162,19 +164,44 @@
             </select>
           </div>
 
-          <!-- 3. Selección de Modo: Día Completo vs Hora Concreta -->
+          <!-- 3. Selección de Modo: Día Completo vs Hora Concreta vs Varios Días -->
           <div class="pt-1">
             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Alcance de la ausencia</label>
-            <div class="grid grid-cols-2 gap-2">
-              <button type="button" onclick="setModoAusencia('dia_completo')" id="btn-modo-dia" class="p-2.5 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-blue-900 font-extrabold text-xs flex items-center justify-center gap-1.5 transition">
+            <div class="grid grid-cols-3 gap-1.5">
+              <button type="button" onclick="setModoAusencia('dia_completo')" id="btn-modo-dia" class="p-2.5 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-blue-900 font-extrabold text-[11px] sm:text-xs flex flex-col items-center justify-center gap-1 transition">
                 <i class="ph-bold ph-sun text-base"></i>
                 <span>Día Completo</span>
               </button>
-              <button type="button" onclick="setModoAusencia('hora_individual')" id="btn-modo-hora" class="p-2.5 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 transition">
+              <button type="button" onclick="setModoAusencia('hora_individual')" id="btn-modo-hora" class="p-2.5 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-[11px] sm:text-xs flex flex-col items-center justify-center gap-1 transition">
                 <i class="ph-bold ph-clock text-base"></i>
-                <span>Hora Concreta</span>
+                <span>Hora Suelta</span>
+              </button>
+              <button type="button" onclick="setModoAusencia('rango_fechas')" id="btn-modo-rango" class="p-2.5 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-[11px] sm:text-xs flex flex-col items-center justify-center gap-1 transition">
+                <i class="ph-bold ph-calendar-plus text-base"></i>
+                <span>Varios Días / Baja</span>
               </button>
             </div>
+          </div>
+
+          <!-- Selector de rango de fechas (si aplica baja médica / excursión) -->
+          <div id="wrapper-rango-fechas" class="hidden space-y-2 bg-blue-50/50 p-3 rounded-2xl border border-blue-100">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold text-blue-900">Periodo de la Baja / Ausencia</span>
+              <span id="badge-dias-rango" class="px-2 py-0.5 rounded-lg bg-blue-100 text-blue-800 text-[10px] font-black">5 días lectivos</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Desde (Inicio)</label>
+                <input type="date" id="input-rango-inicio" onchange="actualizarCalculoRango()" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-300 font-semibold text-xs focus:ring-2 focus:ring-blue-600 bg-white">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Hasta (Fin)</label>
+                <input type="date" id="input-rango-fin" onchange="actualizarCalculoRango()" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-300 font-semibold text-xs focus:ring-2 focus:ring-blue-600 bg-white">
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 italic">
+              ℹ️ Se omiten automáticamente los fines de semana y el motor rota los sustitutos para que nadie repita en exceso.
+            </p>
           </div>
 
           <!-- Selector de hora concreta (si aplica) -->
@@ -261,8 +288,13 @@
             </p>
           </div>
 
-          <!-- Botones de Acción para Word / Drive -->
+          <!-- Botones de Acción para Word / Drive / WhatsApp -->
           <div class="flex flex-wrap items-center gap-2">
+            <button onclick="abrirModalResumenWhatsApp()" class="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-2xl shadow-md shadow-emerald-600/20 transition flex items-center gap-1.5" title="Genera el mensaje matinal para enviar al grupo de WhatsApp del Claustro">
+              <i class="ph-bold ph-whatsapp-logo text-base"></i>
+              <span>Resumen WhatsApp Claustro</span>
+            </button>
+
             <button onclick="copiarTablaHoy()" class="px-3.5 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-800 font-extrabold text-xs rounded-2xl border border-blue-200 transition flex items-center gap-1.5 shadow-xs" title="Copia solo las sustituciones de la fecha seleccionada">
               <i class="ph-bold ph-calendar text-sm"></i>
               <span>Copiar Día Actual</span>
@@ -397,15 +429,143 @@
     <!-- ========================================== -->
     <!-- PESTAÑA 4: EQUIDAD Y BALANCE               -->
     <!-- ========================================== -->
-    <section id="tab-equidad" class="tab-content hidden space-y-5 animate-fade-in">
-      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80">
-        <h2 class="text-lg font-black text-slate-900">Balance de Sustituciones Realizadas</h2>
-        <p class="text-xs text-slate-500 mt-0.5">Control de equidad para asegurar un reparto justo y equilibrado entre todo el claustro de Escuelas Pías Aluche.</p>
+    <section id="tab-equidad" class="tab-content hidden space-y-6 animate-fade-in">
+      <!-- Encabezado y Filtros por Trimestre -->
+      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-blue-100 text-blue-800 border border-blue-200 uppercase tracking-wider">
+              Auditoría y Transparencia
+            </span>
+            <span class="text-xs text-slate-400 font-semibold">• 30 Profesores</span>
+          </div>
+          <h2 class="text-xl font-black text-slate-900">Métricas de Equidad y Balance del Claustro</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Demostración analítica del reparto homogéneo de sustituciones y cumplimiento de los criterios oficiales (Guardia ➔ Reunión ➔ Apoyo).</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Filtro de Trimestre -->
+          <div class="flex bg-slate-100 p-1 rounded-2xl text-xs font-bold" id="filtro-trimestre-btns">
+            <button type="button" onclick="cambiarTrimestre('todo')" data-trim="todo" class="trim-btn px-3 py-1.5 rounded-xl bg-white text-blue-900 shadow-xs transition">Todo el Curso</button>
+            <button type="button" onclick="cambiarTrimestre('1')" data-trim="1" class="trim-btn px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition">1er Trimestre</button>
+            <button type="button" onclick="cambiarTrimestre('2')" data-trim="2" class="trim-btn px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition">2º Trimestre</button>
+            <button type="button" onclick="cambiarTrimestre('3')" data-trim="3" class="trim-btn px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition">3er Trimestre</button>
+          </div>
+
+          <button onclick="exportarCSVEquidad()" class="px-3.5 py-2 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5">
+            <i class="ph-bold ph-file-csv text-base text-emerald-400"></i>
+            <span>Descargar Excel / CSV</span>
+          </button>
+        </div>
       </div>
 
-      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80">
-        <div id="lista-equidad" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          <!-- Poblado dinámicamente -->
+      <!-- Tarjetas de Métricas Clave (KPIs) -->
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3" id="kpis-equidad">
+        <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200/80">
+          <span class="text-[11px] font-bold uppercase text-slate-400 tracking-wider">Total Sustituciones</span>
+          <div class="text-2xl font-black text-slate-900 mt-1" id="kpi-total">0</div>
+          <p class="text-[10px] text-slate-500 font-semibold mt-0.5" id="kpi-periodo-nombre">En el periodo</p>
+        </div>
+        <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200/80">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase text-emerald-700 tracking-wider">1º En Guardia</span>
+            <span class="px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-extrabold" id="kpi-pct-guardias">0%</span>
+          </div>
+          <div class="text-2xl font-black text-emerald-900 mt-1" id="kpi-guardias">0</div>
+          <p class="text-[10px] text-emerald-700 font-medium mt-0.5">Máxima prioridad</p>
+        </div>
+        <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200/80">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase text-blue-700 tracking-wider">2º En Reunión</span>
+            <span class="px-1.5 py-0.5 rounded-md bg-blue-100 text-blue-800 text-[10px] font-extrabold" id="kpi-pct-reuniones">0%</span>
+          </div>
+          <div class="text-2xl font-black text-blue-950 mt-1" id="kpi-reuniones">0</div>
+          <p class="text-[10px] text-blue-600 font-medium mt-0.5">Huecos sin alumnos</p>
+        </div>
+        <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200/80">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase text-purple-700 tracking-wider">3º En Apoyo</span>
+            <span class="px-1.5 py-0.5 rounded-md bg-purple-100 text-purple-800 text-[10px] font-extrabold" id="kpi-pct-apoyos">0%</span>
+          </div>
+          <div class="text-2xl font-black text-purple-950 mt-1" id="kpi-apoyos">0</div>
+          <p class="text-[10px] text-purple-600 font-medium mt-0.5">Último recurso</p>
+        </div>
+        <div class="col-span-2 md:col-span-1 bg-gradient-to-br from-blue-900 to-indigo-950 text-white rounded-3xl p-4 shadow-sm border border-blue-800">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-extrabold uppercase text-blue-200 tracking-wider">Índice Equidad</span>
+            <i class="ph-bold ph-scales text-lg text-emerald-400"></i>
+          </div>
+          <div class="text-2xl font-black text-white mt-1" id="kpi-indice">100%</div>
+          <p class="text-[10px] text-emerald-300 font-semibold mt-0.5">Reparto Homogéneo</p>
+        </div>
+      </div>
+
+      <!-- Gráficas Interactivas con Chart.js -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Gráfica 1: Top 10 Profesores (Barras Horizontales Apiladas) -->
+        <div class="lg:col-span-7 bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+            <div>
+              <h3 class="text-sm font-black text-slate-900">Docentes con Más Intervenciones</h3>
+              <p class="text-[11px] text-slate-500">Distribución de carga por tipo de disponibilidad (Guardia / Reunión / Apoyo).</p>
+            </div>
+            <span class="text-xs font-bold text-slate-400">Top 10</span>
+          </div>
+          <div class="relative h-64 w-full">
+            <canvas id="chart-ranking-profesores"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfica 2: Criterio y Etapa (Donut) -->
+        <div class="lg:col-span-5 bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+            <div>
+              <h3 class="text-sm font-black text-slate-900">Cumplimiento de Criterios</h3>
+              <p class="text-[11px] text-slate-500">Proporción de sustituciones asignadas por prelación.</p>
+            </div>
+            <i class="ph-bold ph-chart-donut text-blue-600 text-lg"></i>
+          </div>
+          <div class="relative h-64 w-full flex items-center justify-center">
+            <canvas id="chart-criterios-donut"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla Detallada de Auditoría del Claustro -->
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div>
+            <h3 class="text-base font-black text-slate-900">Auditoría Individual de los 30 Profesores</h3>
+            <p class="text-xs text-slate-500">Desglose exacto de horas asignadas en guardia, reunión y apoyo para cada docente.</p>
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <input type="text" id="input-buscar-equidad" oninput="filtrarTablaEquidad()" placeholder="Buscar docente..." class="px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-semibold focus:ring-2 focus:ring-blue-600 w-full sm:w-60 bg-white">
+            <div class="flex bg-slate-100 p-0.5 rounded-xl text-[11px] font-bold">
+              <button type="button" onclick="filtrarEtapaEquidad('Todos')" id="btn-eq-todos" class="px-2.5 py-1 rounded-lg bg-white text-blue-900 shadow-xs">Todos</button>
+              <button type="button" onclick="filtrarEtapaEquidad('Primaria')" id="btn-eq-pri" class="px-2.5 py-1 rounded-lg text-slate-600">Primaria</button>
+              <button type="button" onclick="filtrarEtapaEquidad('Infantil')" id="btn-eq-inf" class="px-2.5 py-1 rounded-lg text-slate-600">Infantil</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 text-slate-700 text-[11px] font-black uppercase tracking-wider border-b border-slate-200">
+                <th class="py-3 px-4">Docente</th>
+                <th class="py-3 px-4">Etapa</th>
+                <th class="py-3 px-4 text-center text-emerald-800">🛡️ Guardias</th>
+                <th class="py-3 px-4 text-center text-blue-800">👥 Reuniones</th>
+                <th class="py-3 px-4 text-center text-purple-800">🤝 Apoyos</th>
+                <th class="py-3 px-4 text-center font-extrabold text-slate-900">Total Periodo</th>
+                <th class="py-3 px-4 text-center text-slate-600">Total Curso</th>
+                <th class="py-3 px-4">Estado Carga</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-equidad" class="divide-y divide-slate-100 font-medium text-slate-700">
+              <!-- Rellenado dinámicamente -->
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -431,6 +591,66 @@
       <div class="flex justify-end gap-2 pt-2">
         <button onclick="cerrarModalTarea()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">Cancelar</button>
         <button onclick="guardarTareaModal()" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition">Guardar Tarea</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Resumen Matinal de WhatsApp (Claustro) -->
+  <div id="modal-resumen-whatsapp" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-4 animate-fade-in">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl">
+            <i class="ph-bold ph-whatsapp-logo"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900">Resumen Matinal para WhatsApp</h3>
+            <p class="text-[11px] text-slate-500">Mensaje oficial formateado listo para enviar al grupo del claustro</p>
+          </div>
+        </div>
+        <button onclick="cerrarModalResumenWhatsApp()" class="text-slate-400 hover:text-slate-700">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Filtros del Modal -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-200/80">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Fecha del Resumen</label>
+          <input type="date" id="input-fecha-resumen-wa" onchange="regenerarTextoWhatsApp()" class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-semibold text-xs focus:ring-2 focus:ring-emerald-600 bg-white">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Filtro de Etapa</label>
+          <select id="select-etapa-resumen-wa" onchange="regenerarTextoWhatsApp()" class="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-semibold text-xs focus:ring-2 focus:ring-emerald-600 bg-white">
+            <option value="Todos">Todas las etapas (Infantil + Primaria)</option>
+            <option value="Primaria">Solo Primaria</option>
+            <option value="Infantil">Solo Infantil</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Previsualización del mensaje -->
+      <div>
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Texto del Mensaje</label>
+          <span class="text-[11px] text-slate-400">Puedes editar el texto antes de enviar</span>
+        </div>
+        <textarea id="textarea-resumen-wa" rows="10" class="w-full p-3.5 rounded-2xl border border-slate-300 font-mono text-xs text-slate-800 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-emerald-600 focus:outline-none"></textarea>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-slate-100">
+        <span class="text-[11px] text-slate-500 font-medium" id="wa-stats-info">0 sustituciones</span>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <button onclick="copiarTextoWhatsApp()" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs transition flex items-center justify-center gap-1.5">
+            <i class="ph-bold ph-copy text-sm"></i>
+            <span>Copiar Mensaje</span>
+          </button>
+          <button onclick="abrirWhatsAppDirecto()" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-md transition flex items-center justify-center gap-1.5">
+            <i class="ph-bold ph-paper-plane-tilt text-sm"></i>
+            <span>Abrir en WhatsApp</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -535,17 +755,65 @@
       modoAusencia = modo;
       const btnDia = document.getElementById("btn-modo-dia");
       const btnHora = document.getElementById("btn-modo-hora");
+      const btnRango = document.getElementById("btn-modo-rango");
       const wrapperHora = document.getElementById("wrapper-hora-concreta");
+      const wrapperRango = document.getElementById("wrapper-rango-fechas");
+
+      // Reset clases
+      [btnDia, btnHora, btnRango].forEach(b => {
+        if (b) b.className = "p-2.5 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-[11px] sm:text-xs flex flex-col items-center justify-center gap-1 transition";
+      });
 
       if (modo === "dia_completo") {
-        btnDia.className = "p-2.5 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-blue-900 font-extrabold text-xs flex items-center justify-center gap-1.5 transition";
-        btnHora.className = "p-2.5 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 transition";
+        btnDia.className = "p-2.5 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-blue-900 font-extrabold text-[11px] sm:text-xs flex flex-col items-center justify-center gap-1 transition";
         wrapperHora.classList.add("hidden");
-      } else {
-        btnHora.className = "p-2.5 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-blue-900 font-extrabold text-xs flex items-center justify-center gap-1.5 transition";
-        btnDia.className = "p-2.5 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 transition";
+        wrapperRango.classList.add("hidden");
+      } else if (modo === "hora_individual") {
+        btnHora.className = "p-2.5 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-blue-900 font-extrabold text-[11px] sm:text-xs flex flex-col items-center justify-center gap-1 transition";
         wrapperHora.classList.remove("hidden");
+        wrapperRango.classList.add("hidden");
+      } else if (modo === "rango_fechas") {
+        btnRango.className = "p-2.5 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-blue-900 font-extrabold text-[11px] sm:text-xs flex flex-col items-center justify-center gap-1 transition";
+        wrapperHora.classList.add("hidden");
+        wrapperRango.classList.remove("hidden");
+        
+        // Inicializar fechas de inicio y fin si están vacías
+        const inpIni = document.getElementById("input-rango-inicio");
+        const inpFin = document.getElementById("input-rango-fin");
+        const fechaActual = document.getElementById("input-fecha").value || toIsoLocal(new Date());
+        if (!inpIni.value) inpIni.value = fechaActual;
+        if (!inpFin.value) {
+          const dFin = new Date(fechaActual + "T12:00:00");
+          dFin.setDate(dFin.getDate() + 4);
+          inpFin.value = toIsoLocal(dFin);
+        }
+        actualizarCalculoRango();
       }
+    }
+
+    function actualizarCalculoRango() {
+      const ini = document.getElementById("input-rango-inicio").value;
+      const fin = document.getElementById("input-rango-fin").value;
+      const badge = document.getElementById("badge-dias-rango");
+      if (!ini || !fin || !badge) return;
+
+      const d1 = new Date(ini + "T12:00:00");
+      const d2 = new Date(fin + "T12:00:00");
+      if (d1 > d2) {
+        badge.textContent = "Fecha inicio posterior a fin";
+        badge.className = "px-2 py-0.5 rounded-lg bg-rose-100 text-rose-800 text-[10px] font-black";
+        return;
+      }
+
+      let count = 0;
+      let cur = new Date(d1);
+      while (cur <= d2) {
+        if (cur.getDay() !== 0 && cur.getDay() !== 6) count++;
+        cur.setDate(cur.getDate() + 1);
+      }
+
+      badge.textContent = `${count} días lectivos`;
+      badge.className = "px-2 py-0.5 rounded-lg bg-blue-100 text-blue-800 text-[10px] font-black";
     }
 
     function filtrarEtapaProf(etapa) {
@@ -617,14 +885,10 @@
 
     function onPeriodoChange() {}
 
-    async function buscarSustitutos() {
-      const fecha = document.getElementById("input-fecha").value;
-      const profesorId = document.getElementById("select-profesor-ausente").value;
+    let evaluacionRangoActual = null;
 
-      if (!fecha) {
-        showToast("Por favor selecciona una fecha.", "warning");
-        return;
-      }
+    async function buscarSustitutos() {
+      const profesorId = document.getElementById("select-profesor-ausente").value;
       if (!profesorId) {
         showToast("Por favor selecciona el profesor ausente.", "warning");
         return;
@@ -642,7 +906,30 @@
       `;
 
       try {
-        if (modoAusencia === "dia_completo") {
+        if (modoAusencia === "rango_fechas") {
+          const fIni = document.getElementById("input-rango-inicio").value;
+          const fFin = document.getElementById("input-rango-fin").value;
+          if (!fIni || !fFin) {
+            throw new Error("Selecciona fecha de inicio y fin para la baja.");
+          }
+
+          const res = await fetch("/api/buscar-sustitutos-rango", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              fecha_inicio: fIni,
+              fecha_fin: fFin,
+              profesor_ausente_id: profesorId
+            })
+          });
+          const data = await res.json();
+          if (data.error) throw new Error(data.error);
+          evaluacionRangoActual = data;
+          renderResultadosRango(data);
+        } else if (modoAusencia === "dia_completo") {
+          const fecha = document.getElementById("input-fecha").value;
+          if (!fecha) throw new Error("Por favor selecciona una fecha.");
+
           const periodosLectivos = ["1H", "2H", "3H", "4H", "5H"];
           const res = await fetch("/api/buscar-sustitutos-multiple", {
             method: "POST",
@@ -658,6 +945,9 @@
           evaluacionActual = data;
           renderResultadosMultiple(data);
         } else {
+          const fecha = document.getElementById("input-fecha").value;
+          if (!fecha) throw new Error("Por favor selecciona una fecha.");
+
           const periodoId = document.getElementById("select-periodo").value;
           const res = await fetch("/api/buscar-sustitutos", {
             method: "POST",
@@ -679,6 +969,188 @@
             <p class="text-xs">${err.message}</p>
           </div>
         `;
+      }
+    }
+
+    function renderResultadosRango(data) {
+      const panel = document.getElementById("panel-resultados");
+      const ausente = data.profesor_ausente;
+      
+      let totalClasesPeriodo = 0;
+      let totalPendientes = 0;
+      data.dias.forEach(d => {
+        d.tramos_evaluados.forEach(t => {
+          if (t.tiene_clase_lectiva) {
+            totalClasesPeriodo++;
+            if (!t.ya_asignada) totalPendientes++;
+          }
+        });
+      });
+
+      let html = `
+        <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/90 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-3">
+            <div>
+              <div class="flex items-center gap-2 mb-0.5">
+                <span class="text-[11px] font-black uppercase text-purple-700 tracking-wider">Planificación de Baja Médica / Periodo</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-purple-100 text-purple-800">${data.total_dias_lectivos} días lectivos</span>
+              </div>
+              <h3 class="text-base font-extrabold text-slate-900">${ausente.nombre} (${ausente.etapa})</h3>
+              <p class="text-xs text-slate-500 font-semibold">Del ${data.fecha_inicio} al ${data.fecha_fin} · ${totalClasesPeriodo} horas lectivas totales</p>
+            </div>
+            ${totalPendientes > 0 ? `
+              <button onclick="confirmarRangoCompleto()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-2xl shadow-md transition flex items-center gap-1.5 shrink-0">
+                <i class="ph-bold ph-checks text-base"></i>
+                <span>Confirmar toda la baja (${totalPendientes} horas en 1 clic)</span>
+              </button>
+            ` : `
+              <span class="px-3 py-1.5 rounded-xl bg-emerald-100 text-emerald-800 text-xs font-black">
+                ✓ Todo el periodo ya asignado
+              </span>
+            `}
+          </div>
+
+          <div class="space-y-4">
+      `;
+
+      data.dias.forEach((dia, diaIdx) => {
+        const clasesDia = dia.tramos_evaluados.filter(t => t.tiene_clase_lectiva);
+        html += `
+          <div class="rounded-2xl border border-slate-200 overflow-hidden bg-slate-50/50">
+            <div class="bg-slate-100 px-4 py-2.5 flex items-center justify-between border-b border-slate-200">
+              <span class="text-xs font-black text-slate-900">📅 ${dia.dia_nombre} · ${dia.fecha}</span>
+              <span class="text-[11px] font-bold text-slate-600">${clasesDia.length} clases lectivas</span>
+            </div>
+            <div class="p-3 space-y-2.5">
+        `;
+
+        if (clasesDia.length === 0) {
+          html += `<p class="text-xs text-slate-400 italic py-2">Sin clases regulares con alumnos este día (solo guardias/reuniones no sustituibles).</p>`;
+        } else {
+          clasesDia.forEach(tramo => {
+            const ya = tramo.ya_asignada;
+            const rec = tramo.recomendado;
+            const slotKey = `${dia.fecha}_${tramo.periodo_id}`;
+
+            html += `
+              <div class="bg-white p-3 rounded-xl border border-slate-200/80 shadow-xs">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded-lg text-[11px] font-black bg-blue-900 text-white">${tramo.periodo_nombre.split(' ')[0]}</span>
+                    <span class="text-xs font-bold text-slate-700">${tramo.hora_inicio} - ${tramo.hora_fin}</span>
+                    <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                      ${tramo.materia} (${tramo.curso_grupo})
+                    </span>
+                  </div>
+                  ${ya ? `
+                    <span class="text-[11px] font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-lg border border-emerald-200 flex items-center gap-1">
+                      <i class="ph-bold ph-check"></i> Asignada a ${ya.profesor_sustituto_nombre}
+                    </span>
+                  ` : ''}
+                </div>
+            `;
+
+            if (ya) {
+              html += `</div>`;
+              return;
+            }
+
+            html += `
+              <div class="grid grid-cols-1 md:grid-cols-12 gap-2 pt-2 border-t border-slate-100">
+                <div class="md:col-span-6">
+                  <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Sustituto Propuesto (Rotación de Baja)</label>
+                  <select id="select-rango-${slotKey}" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-300 text-xs font-semibold bg-white focus:ring-2 focus:ring-blue-600">
+            `;
+
+            tramo.candidatos.forEach(c => {
+              const isRec = rec && rec.profesor.id === c.profesor.id;
+              html += `
+                <option value="${c.profesor.id}" ${isRec ? 'selected' : ''}>
+                  ${isRec ? '★ ' : ''}${c.profesor.nombre} [${c.prioridad_categoria}] (${c.profesor.sustituciones_realizadas} previas)
+                </option>
+              `;
+            });
+
+            html += `
+                  </select>
+                </div>
+                <div class="md:col-span-6">
+                  <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Qué deben hacer en su hora</label>
+                  <input type="text" id="input-rango-tarea-${slotKey}" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-300 text-xs font-medium" placeholder="Instrucciones o temario de la sesión...">
+                </div>
+              </div>
+            </div>`;
+          });
+        }
+
+        html += `
+            </div>
+          </div>
+        `;
+      });
+
+      html += `
+          </div>
+        </div>
+      `;
+
+      panel.innerHTML = html;
+    }
+
+    async function confirmarRangoCompleto() {
+      if (!evaluacionRangoActual) return;
+      const ausenteId = evaluacionRangoActual.profesor_ausente.id;
+      
+      const diasAsignaciones = [];
+      evaluacionRangoActual.dias.forEach(dia => {
+        const asignacionesDia = [];
+        dia.tramos_evaluados.forEach(tramo => {
+          if (!tramo.tiene_clase_lectiva || tramo.ya_asignada) return;
+          const slotKey = `${dia.fecha}_${tramo.periodo_id}`;
+          const sel = document.getElementById("select-rango-" + slotKey);
+          const inp = document.getElementById("input-rango-tarea-" + slotKey);
+          if (sel && sel.value) {
+            asignacionesDia.push({
+              periodo_id: tramo.periodo_id,
+              profesor_sustituto_id: sel.value,
+              aula: tramo.aula,
+              curso_grupo: tramo.curso_grupo,
+              materia: tramo.materia,
+              que_hacer: inp ? inp.value.trim() : ""
+            });
+          }
+        });
+        if (asignacionesDia.length > 0) {
+          diasAsignaciones.push({
+            fecha: dia.fecha,
+            asignaciones: asignacionesDia
+          });
+        }
+      });
+
+      if (diasAsignaciones.length === 0) {
+        showToast("No hay horas pendientes para asignar en este periodo.", "info");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/asignar-sustituciones-rango", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            profesor_ausente_id: ausenteId,
+            dias_asignaciones: diasAsignaciones
+          })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        showToast(`¡Baja confirmada! ${data.total_asignadas} horas registradas en el cuadrante.`, "success");
+        await buscarSustitutos();
+        await cargarDatosIniciales();
+        switchTab("cuadrante");
+      } catch (err) {
+        showToast(err.message, "error");
       }
     }
 
@@ -1472,33 +1944,310 @@
       }
     }
 
-    function renderEquidad() {
-      const cont = document.getElementById("lista-equidad");
-      if (!cont) return;
+    // ==========================================
+    // FUNCIONALIDADES DE WHATSAPP (CLAUSTRO)
+    // ==========================================
+    function abrirModalResumenWhatsApp() {
+      const fechaActual = document.getElementById("input-fecha").value || toIsoLocal(new Date());
+      document.getElementById("input-fecha-resumen-wa").value = fechaActual;
+      document.getElementById("modal-resumen-whatsapp").classList.remove("hidden");
+      regenerarTextoWhatsApp();
+    }
 
-      const ordenados = profesoresData.slice().sort((a,b) => b.sustituciones_realizadas - a.sustituciones_realizadas);
-      const maxSubs = Math.max(1, ...ordenados.map(p => p.sustituciones_realizadas));
+    function cerrarModalResumenWhatsApp() {
+      document.getElementById("modal-resumen-whatsapp").classList.add("hidden");
+    }
+
+    function regenerarTextoWhatsApp() {
+      const fecha = document.getElementById("input-fecha-resumen-wa").value;
+      const etapaFiltro = document.getElementById("select-etapa-resumen-wa").value;
+      
+      let subs = sustitucionesData.filter(s => s.fecha === fecha && s.estado !== "CANCELADA");
+      if (etapaFiltro !== "Todos") {
+        subs = subs.filter(s => {
+          const aus = profesoresData.find(p => p.id === s.profesor_ausente_id);
+          return aus && (aus.etapa === etapaFiltro || (aus.departamento && aus.departamento.includes(etapaFiltro)));
+        });
+      }
+
+      // Ordenar 1H -> 5H
+      subs.sort((a,b) => a.periodo_id.localeCompare(b.periodo_id));
+
+      const diasNombres = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+      const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+      const dObj = new Date(fecha + "T12:00:00");
+      const diaTexto = `${diasNombres[dObj.getDay()]}, ${dObj.getDate()} de ${meses[dObj.getMonth()]}`;
+
+      document.getElementById("wa-stats-info").textContent = `${subs.length} sustitución${subs.length === 1 ? '' : 'es'} programada${subs.length === 1 ? '' : 's'}`;
+
+      if (subs.length === 0) {
+        document.getElementById("textarea-resumen-wa").value = 
+          `🏫 *COLEGIO NTRA. SRA. DE LAS ESCUELAS PÍAS (ALUCHE)*\n` +
+          `📅 *${diaTexto}*\n\n` +
+          `✨ *No hay sustituciones registradas para el día de hoy.*\n` +
+          `¡Buen día a todos!\n\n` +
+          `— Coordinación (Vero)`;
+        return;
+      }
+
+      let msg = `🏫 *ESCUELAS PÍAS ALUCHE · Cuadrante de Sustituciones*\n`;
+      msg += `📅 *${diaTexto}*\n`;
+      msg += `━━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+      subs.forEach(s => {
+        const horaStr = s.periodo_nombre ? s.periodo_nombre.split(' (')[0] : s.periodo_id;
+        const tarea = s.que_hacer || s.observaciones || "Continuar temario habitual";
+        msg += `⏰ *${horaStr.toUpperCase()}*\n`;
+        msg += `• 👤 *Sustituye:* ${s.profesor_sustituto_nombre}\n`;
+        msg += `• ⚠️ *Falta:* ${s.profesor_ausente_nombre}\n`;
+        msg += `• 📍 *Clase:* ${s.curso_grupo || s.aula || 'Aula'} · ${s.materia || 'Asignatura'}\n`;
+        msg += `• 📝 *Tarea:* ${tarea}\n\n`;
+      });
+
+      msg += `━━━━━━━━━━━━━━━━━━━━━\n`;
+      msg += `_Rogamos a los profesores sustitutos acudir con máxima puntualidad a las aulas. ¡Muchas gracias por vuestra colaboración!_\n\n`;
+      msg += `— *Coordinación Infantil y Primaria (Vero)*`;
+
+      document.getElementById("textarea-resumen-wa").value = msg;
+    }
+
+    function copiarTextoWhatsApp() {
+      const txt = document.getElementById("textarea-resumen-wa").value;
+      navigator.clipboard.writeText(txt).then(() => {
+        showToast("¡Mensaje para el grupo de WhatsApp copiado al portapapeles!", "success");
+      });
+    }
+
+    function abrirWhatsAppDirecto() {
+      const txt = document.getElementById("textarea-resumen-wa").value;
+      const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`;
+      window.open(url, "_blank");
+    }
+
+    // ==========================================
+    // ANALÍTICAS Y GRÁFICAS DE EQUIDAD (CHART.JS)
+    // ==========================================
+    let trimestreSeleccionado = "todo";
+    let estadisticasEquidadData = null;
+    let chartRankingInstance = null;
+    let chartCriteriosInstance = null;
+    let etapaFiltroEquidad = "Todos";
+
+    async function cambiarTrimestre(trim) {
+      trimestreSeleccionado = trim;
+      document.querySelectorAll(".trim-btn").forEach(btn => {
+        if (btn.dataset.trim === trim) {
+          btn.className = "trim-btn px-3 py-1.5 rounded-xl bg-white text-blue-900 shadow-xs transition";
+        } else {
+          btn.className = "trim-btn px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition";
+        }
+      });
+      await cargarEstadisticasEquidad(trim);
+    }
+
+    async function cargarEstadisticasEquidad(trim = "todo") {
+      try {
+        const res = await fetch(`/api/estadisticas-equidad?trimestre=${trim}`);
+        const data = await res.json();
+        estadisticasEquidadData = data;
+        renderEquidadDashboard(data);
+      } catch (err) {
+        showToast("Error cargando analíticas de equidad: " + err.message, "error");
+      }
+    }
+
+    function renderEquidadDashboard(data) {
+      if (!data) return;
+      const kpi = data.kpi;
+
+      document.getElementById("kpi-total").textContent = kpi.total_sustituciones;
+      document.getElementById("kpi-periodo-nombre").textContent = data.periodo_nombre;
+      
+      document.getElementById("kpi-guardias").textContent = kpi.total_guardias;
+      document.getElementById("kpi-pct-guardias").textContent = `${kpi.porcentaje_guardias}%`;
+      
+      document.getElementById("kpi-reuniones").textContent = kpi.total_reuniones;
+      document.getElementById("kpi-pct-reuniones").textContent = `${kpi.porcentaje_reuniones}%`;
+      
+      document.getElementById("kpi-apoyos").textContent = kpi.total_apoyos;
+      document.getElementById("kpi-pct-apoyos").textContent = `${kpi.porcentaje_apoyos}%`;
+      
+      document.getElementById("kpi-indice").textContent = `${kpi.indice_equidad}%`;
+
+      // Renderizar gráficas
+      renderGraficaRanking(data.ranking_profesores);
+      renderGraficaCriterios(kpi);
+
+      // Renderizar tabla de transparencia
+      renderTablaTransparencia(data.ranking_profesores);
+    }
+
+    function renderGraficaRanking(profesores) {
+      const ctx = document.getElementById("chart-ranking-profesores");
+      if (!ctx) return;
+
+      const top10 = profesores.slice(0, 10);
+      const labels = top10.map(p => p.nombre.split(' ')[0] + ' ' + (p.nombre.split(' ')[1] || ''));
+      const guardiasData = top10.map(p => p.guardias);
+      const reunionesData = top10.map(p => p.reuniones);
+      const apoyosData = top10.map(p => p.apoyos);
+
+      if (chartRankingInstance) chartRankingInstance.destroy();
+
+      chartRankingInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            { label: 'Guardias (1º)', data: guardiasData, backgroundColor: '#059669', borderRadius: 4 },
+            { label: 'Reuniones (2º)', data: reunionesData, backgroundColor: '#2563eb', borderRadius: 4 },
+            { label: 'Apoyos (3º)', data: apoyosData, backgroundColor: '#7c3aed', borderRadius: 4 }
+          ]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { stacked: true, grid: { color: '#f1f5f9' }, ticks: { precision: 0, font: { size: 10 } } },
+            y: { stacked: true, grid: { display: false }, ticks: { font: { size: 11, weight: 'bold' } } }
+          },
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } },
+            tooltip: { cornerRadius: 8 }
+          }
+        }
+      });
+    }
+
+    function renderGraficaCriterios(kpi) {
+      const ctx = document.getElementById("chart-criterios-donut");
+      if (!ctx) return;
+
+      if (chartCriteriosInstance) chartCriteriosInstance.destroy();
+
+      const total = kpi.total_sustituciones || 1;
+      const values = kpi.total_sustituciones > 0
+        ? [kpi.total_guardias, kpi.total_reuniones, kpi.total_apoyos]
+        : [1, 0, 0];
+
+      chartCriteriosInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['1º Guardia', '2º Reunión', '3º Apoyo'],
+          datasets: [{
+            data: values,
+            backgroundColor: ['#059669', '#2563eb', '#7c3aed'],
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11, weight: 'bold' } } },
+            tooltip: { cornerRadius: 8 }
+          },
+          cutout: '70%'
+        }
+      });
+    }
+
+    function filtrarEtapaEquidad(etapa) {
+      etapaFiltroEquidad = etapa;
+      ['todos', 'pri', 'inf'].forEach(k => {
+        const b = document.getElementById("btn-eq-" + k);
+        if (b) b.className = "px-2.5 py-1 rounded-lg text-slate-600";
+      });
+      const activeId = etapa === 'Todos' ? 'todos' : (etapa === 'Primaria' ? 'pri' : 'inf');
+      const b = document.getElementById("btn-eq-" + activeId);
+      if (b) b.className = "px-2.5 py-1 rounded-lg bg-white text-blue-900 shadow-xs";
+
+      if (estadisticasEquidadData) {
+        renderTablaTransparencia(estadisticasEquidadData.ranking_profesores);
+      }
+    }
+
+    function filtrarTablaEquidad() {
+      if (estadisticasEquidadData) {
+        renderTablaTransparencia(estadisticasEquidadData.ranking_profesores);
+      }
+    }
+
+    function renderTablaTransparencia(profesores) {
+      const tbody = document.getElementById("tbody-equidad");
+      if (!tbody) return;
+
+      const query = (document.getElementById("input-buscar-equidad")?.value || "").toLowerCase().trim();
+
+      let filtrados = profesores.filter(p => {
+        const matchEtapa = etapaFiltroEquidad === "Todos" || p.etapa === etapaFiltroEquidad || (p.departamento && p.departamento.includes(etapaFiltroEquidad));
+        const matchQuery = !query || p.nombre.toLowerCase().includes(query);
+        return matchEtapa && matchQuery;
+      });
+
+      if (filtrados.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-400 font-semibold">No se encontraron docentes con esos filtros</td></tr>`;
+        return;
+      }
+
+      const maxTotal = Math.max(1, ...profesores.map(p => p.total_periodo));
 
       let html = "";
-      ordenados.forEach(p => {
-        const pct = Math.round((p.sustituciones_realizadas / maxSubs) * 100);
+      filtrados.forEach((p, idx) => {
+        const bg = idx % 2 === 0 ? "bg-white" : "bg-slate-50/50";
+        const pct = Math.round((p.total_periodo / maxTotal) * 100);
+        
+        let badgeEstado = '<span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800">Equilibrada</span>';
+        if (p.total_periodo === 0) {
+          badgeEstado = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500">Disponible</span>';
+        } else if (p.total_periodo >= maxTotal && maxTotal > 2) {
+          badgeEstado = '<span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-800">Carga Activa</span>';
+        }
+
         html += `
-          <div class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50 flex items-center justify-between gap-3">
-            <div class="min-w-0 flex-1">
-              <div class="flex items-center justify-between mb-1">
-                <span class="font-bold text-xs text-slate-900 truncate">${p.nombre}</span>
-                <span class="text-xs font-black text-blue-900">${p.sustituciones_realizadas}</span>
-              </div>
-              <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                <div class="bg-blue-600 h-full rounded-full transition-all" style="width: ${pct}%"></div>
-              </div>
-              <span class="text-[10px] text-slate-500 font-medium">${p.etapa}</span>
-            </div>
-          </div>
+          <tr class="${bg} hover:bg-blue-50/40 transition">
+            <td class="py-2.5 px-4 font-bold text-slate-900">${p.nombre}</td>
+            <td class="py-2.5 px-4 text-slate-500 text-[11px] font-semibold">${p.etapa}</td>
+            <td class="py-2.5 px-4 text-center font-extrabold text-emerald-800">${p.guardias}</td>
+            <td class="py-2.5 px-4 text-center font-extrabold text-blue-800">${p.reuniones}</td>
+            <td class="py-2.5 px-4 text-center font-extrabold text-purple-800">${p.apoyos}</td>
+            <td class="py-2.5 px-4 text-center font-black text-slate-900 text-sm">${p.total_periodo}</td>
+            <td class="py-2.5 px-4 text-center font-bold text-slate-500">${p.sustituciones_historicas}</td>
+            <td class="py-2.5 px-4">${badgeEstado}</td>
+          </tr>
         `;
       });
 
-      cont.innerHTML = html;
+      tbody.innerHTML = html;
+    }
+
+    function exportarCSVEquidad() {
+      if (!estadisticasEquidadData || !estadisticasEquidadData.ranking_profesores) {
+        showToast("No hay datos de balance para exportar", "warning");
+        return;
+      }
+
+      const lista = estadisticasEquidadData.ranking_profesores;
+      let csv = "Docente,Etapa,Guardias,Reuniones,Apoyos,Total Periodo,Total Historico Curso\n";
+      lista.forEach(p => {
+        csv += `"${p.nombre}","${p.etapa}",${p.guardias},${p.reuniones},${p.apoyos},${p.total_periodo},${p.sustituciones_historicas}\n`;
+      });
+
+      // Incluir BOM para que Excel en Windows y Mac reconozca tildes y caracteres españoles correctamente
+      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Balance_Equidad_Escuelas_Pias_${estadisticasEquidadData.trimestre}_${toIsoLocal(new Date())}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("¡Informe de equidad exportado en CSV para Excel!", "success");
+    }
+
+    function renderEquidad() {
+      cargarEstadisticasEquidad(trimestreSeleccionado);
     }
 
     function showToast(mensaje, tipo = "info") {
