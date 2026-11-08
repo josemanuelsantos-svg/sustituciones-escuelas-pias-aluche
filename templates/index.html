@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#1e3a8a">
+  <meta name="theme-color" content="#0b1936">
   <title>Sustituciones · Escuelas Pías Aluche (Vero)</title>
   
-  <!-- Favicon e Iconos Escuelas Pías -->
+  <!-- Favicon Oficial Escuelas Pías -->
   <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/escudo_escolapios_180.png') }}">
   <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/escudo_escolapios_180.png') }}">
 
@@ -22,9 +22,9 @@
   <style>
     body {
       font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-      background-color: #f1f5f9;
-      background-image: radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.08) 0px, transparent 50%),
-                        radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.06) 0px, transparent 50%);
+      background-color: #f8fafc;
+      background-image: radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.05) 0px, transparent 50%),
+                        radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.04) 0px, transparent 50%);
       -webkit-tap-highlight-color: transparent;
     }
     [x-cloak] { display: none !important; }
@@ -48,77 +48,73 @@
   <!-- Toast Container -->
   <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none"></div>
 
-  <!-- Header / Navbar con Logo Oficial Escuelas Pías -->
-  <header class="bg-gradient-to-r from-[#0f172a] via-[#1e3a8a] to-[#1d4ed8] text-white shadow-lg sticky top-0 z-30 border-b border-blue-400/20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-3">
+  <!-- Header / Navbar Elegante y Limpio con Logo Oficial Blanco -->
+  <header class="bg-[#0b1936] text-white shadow-md sticky top-0 z-30 border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-4">
       
-      <!-- Brand Escuelas Pías Aluche con Logo Oficial -->
-      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('asignar')">
-        <div class="h-11 px-2.5 py-1 rounded-2xl bg-white/95 text-blue-900 flex items-center justify-center shadow-md ring-2 ring-blue-300/40 shrink-0">
-          <img src="{{ url_for('static', filename='img/logo_escuelas_pias.png') }}" alt="Colegio Nuestra Señora de las Escuelas Pías Aluche" class="h-8 w-auto object-contain">
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-base sm:text-lg font-black tracking-tight text-white leading-tight">
-              Escuelas Pías Aluche
-            </h1>
-            <span class="text-[11px] bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded-full shadow-xs">
-              Vero
-            </span>
-          </div>
-          <p class="text-xs text-blue-200 font-medium">Gestión de Sustituciones · Infantil y Primaria</p>
+      <!-- Brand Escuelas Pías Aluche con Logo Oficial en Blanco (Sin recuadros artificiales) -->
+      <div class="flex items-center gap-3.5 cursor-pointer" onclick="switchTab('asignar')">
+        <img src="{{ url_for('static', filename='img/logo_escuelas_pias_blanco.png') }}" alt="Colegio Nuestra Señora de las Escuelas Pías Aluche" class="h-9 sm:h-11 w-auto object-contain">
+        
+        <div class="hidden sm:block h-6 w-px bg-white/15"></div>
+        
+        <div class="hidden sm:flex items-center gap-2">
+          <span class="text-xs font-semibold text-slate-300">Sustituciones</span>
+          <span class="text-[11px] bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded-full shadow-xs">
+            Vero
+          </span>
         </div>
       </div>
 
       <!-- Navigation Tabs -->
-      <nav class="flex items-center gap-1.5 bg-slate-950/40 p-1.5 rounded-2xl border border-white/10 backdrop-blur-md">
-        <button onclick="switchTab('asignar')" id="tab-btn-asignar" class="tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all bg-white text-blue-950 shadow-md flex items-center gap-1.5">
+      <nav class="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-2xl border border-white/10 shadow-inner">
+        <button onclick="switchTab('asignar')" id="tab-btn-asignar" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all bg-white text-blue-950 shadow-md flex items-center gap-1.5">
           <i class="ph-bold ph-lightning text-amber-500"></i>
           <span>Asignar</span>
         </button>
-        <button onclick="switchTab('cuadrante')" id="tab-btn-cuadrante" class="tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-blue-100 hover:text-white hover:bg-white/10 flex items-center gap-1.5">
+        <button onclick="switchTab('cuadrante')" id="tab-btn-cuadrante" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-white/10 flex items-center gap-1.5">
           <i class="ph-bold ph-file-doc text-emerald-400"></i>
           <span>Documento Word</span>
         </button>
-        <button onclick="switchTab('horarios')" id="tab-btn-horarios" class="tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-blue-100 hover:text-white hover:bg-white/10 flex items-center gap-1.5">
-          <i class="ph-bold ph-calendar-blank"></i>
-          <span>Horarios</span>
+        <button onclick="switchTab('horarios')" id="tab-btn-horarios" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-white/10 flex items-center gap-1.5">
+          <i class="ph-bold ph-calendar-blank text-blue-400"></i>
+          <span class="hidden md:inline">Horarios</span>
         </button>
-        <button onclick="switchTab('equidad')" id="tab-btn-equidad" class="tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-blue-100 hover:text-white hover:bg-white/10 flex items-center gap-1.5">
-          <i class="ph-bold ph-scales"></i>
-          <span>Equidad</span>
+        <button onclick="switchTab('equidad')" id="tab-btn-equidad" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-white/10 flex items-center gap-1.5">
+          <i class="ph-bold ph-scales text-purple-400"></i>
+          <span class="hidden md:inline">Equidad</span>
         </button>
       </nav>
     </div>
   </header>
 
   <!-- Main Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5">
 
     <!-- ========================================== -->
     <!-- PESTAÑA 1: ASIGNAR SUSTITUCIÓN (VERO)      -->
     <!-- ========================================== -->
-    <section id="tab-asignar" class="tab-content block space-y-6 animate-fade-in">
+    <section id="tab-asignar" class="tab-content block space-y-5 animate-fade-in">
       
       <!-- Banner Criterios Oficiales Escuelas Pías -->
-      <div class="rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white p-5 sm:p-6 shadow-xl border border-blue-400/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="rounded-3xl bg-gradient-to-r from-blue-950 via-[#1e3a8a] to-slate-900 text-white p-5 shadow-lg border border-blue-400/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div class="flex items-center gap-2 mb-1">
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-blue-500/30 text-blue-200 border border-blue-400/30 uppercase tracking-wider">
-              Criterios de Escuelas Pías Aluche
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-blue-500/30 text-blue-200 border border-blue-400/30 uppercase tracking-wider">
+              Criterios Escuelas Pías Aluche
             </span>
             <span class="text-xs text-slate-300">• Coordinación Vero</span>
           </div>
-          <h2 class="text-lg sm:text-xl font-black text-white">
-            Orden de prelación: 1º Guardia ➔ 2º Reuniones ➔ 3º Apoyos
+          <h2 class="text-base sm:text-lg font-black text-white">
+            Orden de selección: 1º Guardia ➔ 2º Reuniones ➔ 3º Apoyos
           </h2>
-          <p class="text-xs sm:text-sm text-blue-200/90 mt-1">
+          <p class="text-xs text-blue-200/90 mt-0.5">
             • <strong>Solo se cubren horas de clase</strong> (las horas de guardia, reunión o apoyo no se cubren).<br>
-            • Primaria sustituye a Primaria e Infantil a Infantil si es posible. A igualdad, quien menos sustituciones lleve.
+            • Primaria sustituye a Primaria e Infantil a Infantil si es posible. A igualdad de criterio, menor carga acumulada.
           </p>
         </div>
 
-        <button onclick="switchTab('cuadrante')" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm rounded-2xl shadow-lg transition flex items-center gap-2 shrink-0">
+        <button onclick="switchTab('cuadrante')" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm rounded-2xl shadow-md transition flex items-center gap-2 shrink-0">
           <i class="ph-bold ph-table text-base"></i>
           <span>Ver Documento Compartido</span>
         </button>
@@ -128,7 +124,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <!-- Columna Izquierda: Formulario de Selección -->
-        <div class="lg:col-span-5 bg-white rounded-3xl p-6 shadow-md border border-slate-200/80 space-y-5">
+        <div class="lg:col-span-5 bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 space-y-4">
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
               <i class="ph-bold ph-user-minus text-rose-500"></i>
@@ -164,14 +160,14 @@
           </div>
 
           <!-- 3. Selección de Modo: Día Completo vs Hora Concreta -->
-          <div class="pt-2">
+          <div class="pt-1">
             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Alcance de la ausencia</label>
             <div class="grid grid-cols-2 gap-2">
-              <button type="button" onclick="setModoAusencia('dia_completo')" id="btn-modo-dia" class="p-3 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-blue-900 font-extrabold text-xs flex items-center justify-center gap-1.5 transition">
+              <button type="button" onclick="setModoAusencia('dia_completo')" id="btn-modo-dia" class="p-2.5 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-blue-900 font-extrabold text-xs flex items-center justify-center gap-1.5 transition">
                 <i class="ph-bold ph-sun text-base"></i>
-                <span>Día Completo (Todas)</span>
+                <span>Día Completo</span>
               </button>
-              <button type="button" onclick="setModoAusencia('hora_individual')" id="btn-modo-hora" class="p-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 transition">
+              <button type="button" onclick="setModoAusencia('hora_individual')" id="btn-modo-hora" class="p-2.5 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 transition">
                 <i class="ph-bold ph-clock text-base"></i>
                 <span>Hora Concreta</span>
               </button>
@@ -191,7 +187,7 @@
           </div>
 
           <!-- Sugerencias Rápidas de Tarea ("Qué deben hacer") -->
-          <div class="pt-2">
+          <div class="pt-1">
             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Plantillas de Tarea Rápida</label>
             <div class="flex flex-wrap gap-1.5">
               <button type="button" onclick="ponerTareaSugerida('Ejercicios del libro y corregir en pizarra')" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-blue-100 hover:text-blue-900 text-slate-600 text-[11px] font-semibold transition">
@@ -213,7 +209,7 @@
           </div>
 
           <!-- Botón de Búsqueda -->
-          <button type="button" onclick="buscarSustitutos()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-blue-500/30 transition flex items-center justify-center gap-2">
+          <button type="button" onclick="buscarSustitutos()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-blue-500/20 transition flex items-center justify-center gap-2">
             <i class="ph-bold ph-magnifying-glass text-lg"></i>
             <span>Buscar Sustitutos Idóneos</span>
           </button>
@@ -245,10 +241,10 @@
     <!-- ========================================== -->
     <!-- PESTAÑA 2: DOCUMENTO COMPARTIDO (WORD)     -->
     <!-- ========================================== -->
-    <section id="tab-cuadrante" class="tab-content hidden space-y-6 animate-fade-in">
+    <section id="tab-cuadrante" class="tab-content hidden space-y-5 animate-fade-in">
       
       <!-- Barra Superior de Controles del Documento Word -->
-      <div class="bg-white rounded-3xl p-5 shadow-md border border-slate-200/80 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
         <div>
           <div class="flex items-center gap-2">
             <h2 class="text-lg font-black text-slate-900">Documento Compartido de Sustituciones</h2>
@@ -281,7 +277,7 @@
       </div>
 
       <!-- Tabla del Documento Compartido -->
-      <div class="bg-white rounded-3xl shadow-md border border-slate-200/80 overflow-hidden">
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse" id="tabla-documento-word">
             <thead>
@@ -299,7 +295,7 @@
             <tbody id="tbody-sustituciones" class="divide-y divide-slate-100 text-xs sm:text-sm font-medium text-slate-700">
               <tr>
                 <td colspan="8" class="text-center py-12 text-slate-400 font-semibold">
-                  Cargando sustituciones del centro...
+                  No hay sustituciones registradas aún en el documento compartido.
                 </td>
               </tr>
             </tbody>
@@ -312,11 +308,11 @@
     <!-- ========================================== -->
     <!-- PESTAÑA 3: HORARIOS DEL CENTRO             -->
     <!-- ========================================== -->
-    <section id="tab-horarios" class="tab-content hidden space-y-6 animate-fade-in">
-      <div class="bg-white rounded-3xl p-5 shadow-md border border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <section id="tab-horarios" class="tab-content hidden space-y-5 animate-fade-in">
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
           <h2 class="text-lg font-black text-slate-900">Horarios Semanales del Claustro</h2>
-          <p class="text-xs text-slate-500">Consulta el cuadrante completo de cualquiera de los 30 profesores de Infantil y Primaria.</p>
+          <p class="text-xs text-slate-500">Consulta el cuadrante completo de cualquiera de los 30 profesores de Infantil y Primaria de Escuelas Pías Aluche.</p>
         </div>
         <div class="w-full sm:w-80">
           <select id="select-profesor-horario" onchange="cargarHorarioDocente()" class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 font-semibold text-sm focus:ring-2 focus:ring-blue-600 bg-white">
@@ -325,7 +321,7 @@
         </div>
       </div>
 
-      <div id="panel-horario-profesor" class="bg-white rounded-3xl p-6 shadow-md border border-slate-200/80 overflow-x-auto min-h-[300px] flex items-center justify-center text-slate-400">
+      <div id="panel-horario-profesor" class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 overflow-x-auto min-h-[300px] flex items-center justify-center text-slate-400">
         Selecciona un profesor para consultar su horario semanal.
       </div>
     </section>
@@ -333,13 +329,13 @@
     <!-- ========================================== -->
     <!-- PESTAÑA 4: EQUIDAD Y BALANCE               -->
     <!-- ========================================== -->
-    <section id="tab-equidad" class="tab-content hidden space-y-6 animate-fade-in">
-      <div class="bg-white rounded-3xl p-5 shadow-md border border-slate-200/80">
+    <section id="tab-equidad" class="tab-content hidden space-y-5 animate-fade-in">
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80">
         <h2 class="text-lg font-black text-slate-900">Balance de Sustituciones Realizadas</h2>
-        <p class="text-xs text-slate-500 mt-0.5">Control de equidad para asegurar un reparto justo y equilibrado entre todo el claustro.</p>
+        <p class="text-xs text-slate-500 mt-0.5">Control de equidad para asegurar un reparto justo y equilibrado entre todo el claustro de Escuelas Pías Aluche.</p>
       </div>
 
-      <div class="bg-white rounded-3xl p-6 shadow-md border border-slate-200/80">
+      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80">
         <div id="lista-equidad" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           <!-- Poblado dinámicamente -->
         </div>
@@ -398,11 +394,9 @@
     }
 
     function ponerTareaSugerida(texto) {
-      // Si estamos en modo individual
       const inputInd = document.getElementById("input-tarea-individual");
       if (inputInd) inputInd.value = texto;
 
-      // O si hay inputs de tareas en tramos múltiples
       document.querySelectorAll("input[id^='input-tarea-']").forEach(inp => {
         if (!inp.value) inp.value = texto;
       });
@@ -413,7 +407,7 @@
       document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
       document.querySelectorAll(".tab-btn").forEach(btn => {
         btn.classList.remove("bg-white", "text-blue-950", "shadow-md");
-        btn.classList.add("text-blue-100");
+        btn.classList.add("text-slate-300");
       });
 
       const tabEl = document.getElementById("tab-" + tabId);
@@ -421,7 +415,7 @@
       if (tabEl) tabEl.classList.remove("hidden");
       if (btnEl) {
         btnEl.classList.add("bg-white", "text-blue-950", "shadow-md");
-        btnEl.classList.remove("text-blue-100");
+        btnEl.classList.remove("text-slate-300");
       }
 
       if (tabId === "cuadrante") {
@@ -438,12 +432,12 @@
       const wrapperHora = document.getElementById("wrapper-hora-concreta");
 
       if (modo === "dia_completo") {
-        btnDia.className = "p-3 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-blue-900 font-extrabold text-xs flex items-center justify-center gap-1.5 transition";
-        btnHora.className = "p-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 transition";
+        btnDia.className = "p-2.5 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-blue-900 font-extrabold text-xs flex items-center justify-center gap-1.5 transition";
+        btnHora.className = "p-2.5 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 transition";
         wrapperHora.classList.add("hidden");
       } else {
-        btnHora.className = "p-3 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-blue-900 font-extrabold text-xs flex items-center justify-center gap-1.5 transition";
-        btnDia.className = "p-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 transition";
+        btnHora.className = "p-2.5 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-blue-900 font-extrabold text-xs flex items-center justify-center gap-1.5 transition";
+        btnDia.className = "p-2.5 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 transition";
         wrapperHora.classList.remove("hidden");
       }
     }
@@ -587,7 +581,7 @@
       const ausente = data.profesor_ausente;
       
       let html = `
-        <div class="bg-white rounded-3xl p-5 shadow-md border border-slate-200/90 space-y-4">
+        <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/90 space-y-4">
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
               <span class="text-[11px] font-black uppercase text-blue-600 tracking-wider">Plan de Sustitución para el Día</span>
@@ -596,7 +590,7 @@
             <span class="text-xs font-bold text-slate-500">${data.fecha}</span>
           </div>
 
-          <div class="space-y-3.5">
+          <div class="space-y-3">
       `;
 
       data.tramos_evaluados.forEach((tramo, idx) => {
@@ -645,7 +639,6 @@
           return;
         }
 
-        // Selector de sustituto y tarea para este tramo
         html += `
           <div class="grid grid-cols-1 md:grid-cols-12 gap-3 mt-3 pt-3 border-t border-slate-200/80">
             <div class="md:col-span-6">
@@ -701,7 +694,7 @@
       const rec = data.recomendado;
 
       let html = `
-        <div class="bg-white rounded-3xl p-6 shadow-md border border-slate-200/90 space-y-4">
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/90 space-y-4">
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
               <span class="text-[11px] font-black uppercase text-blue-600 tracking-wider">${data.periodo.nombre}</span>
@@ -728,7 +721,7 @@
           <span class="font-bold text-blue-700">${data.total_candidatos} docentes disponibles</span>
         </div>
 
-        <div class="space-y-3 pt-2">
+        <div class="space-y-3 pt-1">
           <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Candidatos Disponibles (1º Guardia ➔ 2º Reunión ➔ 3º Apoyo y Menor Carga)</label>
           <div class="max-h-72 overflow-y-auto space-y-2 pr-1">
       `;
@@ -759,12 +752,12 @@
           </div>
         </div>
 
-        <div class="pt-2">
+        <div class="pt-1">
           <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Qué deben hacer en su hora al que le toca</label>
           <textarea id="input-tarea-individual" rows="3" class="w-full p-3 rounded-2xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-blue-600" placeholder="Ej: Realizar los ejercicios 1 al 4 de la página 50 de Matemáticas..."></textarea>
         </div>
 
-        <div class="flex justify-end pt-2">
+        <div class="flex justify-end pt-1">
           <button onclick="asignarIndividualDesdeRadio('${data.periodo.id}', '${data.materia_detectada}', '${data.curso_detectado}')" class="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm rounded-2xl shadow-lg transition flex items-center gap-2">
             <i class="ph-bold ph-check text-base"></i>
             <span>Confirmar Asignación</span>
