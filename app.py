@@ -85,6 +85,50 @@ def get_horarios():
         items = db.get_schedules(etapa=etapa)
     return jsonify([item.to_dict() for item in items])
 
+@app.route("/api/disponibilidad-tramo", methods=["GET"])
+def get_disponibilidad_tramo():
+    """Devuelve el mapa de disponibilidad de todo el claustro en un día y hora concretos."""
+    dia_semana = int(request.args.get("dia_semana", 0))
+    periodo_id = request.args.get("periodo_id", "1H")
+
+    teachers = db.get_teachers(active_only=True)
+    guardias = []
+    reuniones = []
+    apoyos = []
+    en_clase = []
+
+    for t in teachers:
+        slot = db.get_slot_activity_for_teacher(t.id, dia_semana, periodo_id)
+        info = {
+            "id": t.id,
+            "nombre": t.nombre,
+            "etapa": t.etapa,
+            "departamento": t.departamento,
+            "sustituciones_realizadas": t.sustituciones_realizadas,
+            "detalle": slot.descripcion if slot else "Hueco libre",
+            "materia": slot.materia if slot else "",
+            "aula": slot.aula if slot else ""
+        }
+        if not slot:
+            reuniones.append(info)
+        elif slot.tipo_actividad == ActivityType.LECTIVA:
+            en_clase.append(info)
+        elif slot.tipo_actividad == ActivityType.GUARDIA:
+            guardias.append(info)
+        elif slot.tipo_actividad == ActivityType.APOYO:
+            apoyos.append(info)
+        else:
+            reuniones.append(info)
+
+    return jsonify({
+        "dia_semana": dia_semana,
+        "periodo_id": periodo_id,
+        "guardias": guardias,
+        "reuniones": reuniones,
+        "apoyos": apoyos,
+        "en_clase": en_clase
+    })
+
 @app.route("/api/actividad-docente", methods=["GET"])
 def get_actividad_docente():
     """Devuelve la clase/actividad programada para un docente en un día y tramo concreto."""
@@ -189,6 +233,7 @@ def search_substitutes_multiple():
     ]
 
     tramos_evaluados = []
+    virtual_loads = {}
     for pid in periodos_ordenados:
         slot = slots_map.get(pid)
         if not slot or slot.es_recreo:
@@ -216,8 +261,14 @@ def search_substitutes_multiple():
             periodo_id=pid,
             profesor_ausente_id=profesor_ausente_id,
             materia=materia_final,
-            aula=aula_final
+            aula=aula_final,
+            extra_loads=virtual_loads
         )
+
+        rec = evaluacion.get("recomendado")
+        if tiene_clase and not ya_asignada and rec:
+            rec_id = rec["profesor"]["id"]
+            virtual_loads[rec_id] = virtual_loads.get(rec_id, 0) + 1
 
         tramos_evaluados.append({
             "periodo_id": pid,

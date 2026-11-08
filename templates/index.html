@@ -135,11 +135,14 @@
 
           <!-- 1. Fecha -->
           <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Fecha de la ausencia</label>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Fecha de la ausencia</label>
+              <span id="badge-dia-seleccionado" class="px-2 py-0.5 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 text-[11px] font-bold"></span>
+            </div>
             <div class="flex gap-2">
-              <input type="date" id="input-fecha" class="flex-1 px-3.5 py-2.5 rounded-2xl border border-slate-300 font-semibold text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
-              <button type="button" onclick="setHoy()" class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-2xl transition">Hoy</button>
-              <button type="button" onclick="setManana()" class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-2xl transition">Mañana</button>
+              <input type="date" id="input-fecha" onchange="actualizarBadgeFecha()" class="flex-1 px-3.5 py-2.5 rounded-2xl border border-slate-300 font-semibold text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
+              <button type="button" onclick="setHoy()" class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-2xl transition" title="Día lectivo actual o próximo lunes">Hoy / Lunes</button>
+              <button type="button" onclick="setManana()" class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-2xl transition">Siguiente</button>
             </div>
           </div>
 
@@ -244,35 +247,58 @@
     <section id="tab-cuadrante" class="tab-content hidden space-y-5 animate-fade-in">
       
       <!-- Barra Superior de Controles del Documento Word -->
-      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-        <div>
-          <div class="flex items-center gap-2">
-            <h2 class="text-lg font-black text-slate-900">Documento Compartido de Sustituciones</h2>
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-blue-100 text-blue-800 border border-blue-200">
-              Vista Semanal Oficial
-            </span>
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 space-y-4">
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-lg font-black text-slate-900">Documento Compartido de Sustituciones</h2>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-blue-100 text-blue-800 border border-blue-200">
+                Vista Semanal Oficial
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Las 6 columnas del centro: Quién falta, Hora, Clase, Asignatura, Quién sustituye y Qué deben hacer en su hora.
+            </p>
           </div>
-          <p class="text-xs text-slate-500 mt-0.5">
-            Las 6 columnas del centro: Quién falta, Hora, Clase, Asignatura, Quién sustituye y Qué deben hacer en su hora.
-          </p>
+
+          <!-- Botones de Acción para Word / Drive -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="copiarTablaHoy()" class="px-3.5 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-800 font-extrabold text-xs rounded-2xl border border-blue-200 transition flex items-center gap-1.5 shadow-xs" title="Copia solo las sustituciones de la fecha seleccionada">
+              <i class="ph-bold ph-calendar text-sm"></i>
+              <span>Copiar Día Actual</span>
+            </button>
+
+            <button onclick="copiarTablaParaWord()" class="px-3.5 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-extrabold text-xs rounded-2xl border border-indigo-200 transition flex items-center gap-1.5 shadow-xs" title="Copia toda la tabla visible con formato para pegar en Word o Google Docs">
+              <i class="ph-bold ph-copy text-sm"></i>
+              <span>Copiar Tabla Semanal</span>
+            </button>
+            
+            <a id="btn-descargar-docx" href="/api/export-docx" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs sm:text-sm rounded-2xl shadow-md transition flex items-center gap-2">
+              <i class="ph-bold ph-download-simple text-base"></i>
+              <span>Descargar Word (.docx)</span>
+            </a>
+          </div>
         </div>
 
-        <!-- Botones de Acción para Word / Drive -->
-        <div class="flex flex-wrap items-center gap-2">
-          <button onclick="copiarTablaHoy()" class="px-3.5 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-800 font-extrabold text-xs rounded-2xl border border-blue-200 transition flex items-center gap-1.5 shadow-xs" title="Copia solo las sustituciones del día de hoy">
-            <i class="ph-bold ph-calendar text-sm"></i>
-            <span>Copiar Solo Hoy</span>
-          </button>
-
-          <button onclick="copiarTablaParaWord()" class="px-3.5 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-extrabold text-xs rounded-2xl border border-indigo-200 transition flex items-center gap-1.5 shadow-xs" title="Copia toda la tabla semanal con formato para pegar en Word o Google Docs">
-            <i class="ph-bold ph-copy text-sm"></i>
-            <span>Copiar Tabla Semanal</span>
-          </button>
-          
-          <a id="btn-descargar-docx" href="/api/export-docx" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs sm:text-sm rounded-2xl shadow-md transition flex items-center gap-2">
-            <i class="ph-bold ph-download-simple text-base"></i>
-            <span>Descargar Word (.docx)</span>
-          </a>
+        <!-- Navegador de Semanas -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-100">
+          <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-2xl text-xs font-bold">
+            <button type="button" onclick="cambiarSemanaFiltro(-1)" class="px-3 py-1.5 rounded-xl hover:bg-white text-slate-700 transition flex items-center gap-1">
+              <i class="ph-bold ph-caret-left"></i> Semana ant.
+            </button>
+            <button type="button" onclick="cambiarSemanaFiltro(0)" id="btn-semana-actual" class="px-3 py-1.5 rounded-xl bg-white text-blue-900 shadow-xs transition">
+              Semana actual
+            </button>
+            <button type="button" onclick="cambiarSemanaFiltro(1)" class="px-3 py-1.5 rounded-xl hover:bg-white text-slate-700 transition flex items-center gap-1">
+              Semana sig. <i class="ph-bold ph-caret-right"></i>
+            </button>
+            <button type="button" onclick="mostrarTodasSemanas()" id="btn-semana-todas" class="px-3 py-1.5 rounded-xl hover:bg-white text-slate-600 transition">
+              Todas
+            </button>
+          </div>
+          <div id="etiqueta-rango-semana" class="text-xs font-extrabold text-blue-900 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200">
+            Cargando semana...
+          </div>
         </div>
       </div>
 
@@ -309,21 +335,63 @@
     <!-- PESTAÑA 3: HORARIOS DEL CENTRO             -->
     <!-- ========================================== -->
     <section id="tab-horarios" class="tab-content hidden space-y-5 animate-fade-in">
-      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div>
-          <h2 class="text-lg font-black text-slate-900">Horarios Semanales del Claustro</h2>
-          <p class="text-xs text-slate-500">Consulta el cuadrante completo de cualquiera de los 30 profesores de Infantil y Primaria de Escuelas Pías Aluche.</p>
+      <!-- Selector de Modo en Horarios: Por Profesor vs Radar por Hora -->
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 space-y-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-black text-slate-900">Horarios y Radar de Disponibilidad del Claustro</h2>
+            <p class="text-xs text-slate-500">Consulta el horario individual de los 30 profesores o visualiza quién está en Guardia, Reunión o Apoyo en cualquier hora.</p>
+          </div>
+          <div class="flex bg-slate-100 p-1 rounded-2xl text-xs font-bold shrink-0">
+            <button type="button" id="btn-subtab-prof" onclick="switchSubtabHorarios('profesor')" class="px-3.5 py-2 rounded-xl bg-white text-blue-900 shadow-xs transition flex items-center gap-1.5">
+              <i class="ph-bold ph-user"></i> Horario por Profesor
+            </button>
+            <button type="button" id="btn-subtab-radar" onclick="switchSubtabHorarios('radar')" class="px-3.5 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+              <i class="ph-bold ph-radar"></i> ¿Quién está libre por Hora?
+            </button>
+          </div>
         </div>
-        <div class="w-full sm:w-80">
-          <select id="select-profesor-horario" onchange="cargarHorarioDocente()" class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 font-semibold text-sm focus:ring-2 focus:ring-blue-600 bg-white">
-            <option value="">-- Seleccionar profesor para ver horario --</option>
-          </select>
+
+        <!-- Controles Modo 1: Por Profesor -->
+        <div id="controles-horario-profesor" class="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <span class="text-xs font-bold text-slate-600 uppercase tracking-wider">Selecciona un docente del claustro:</span>
+          <div class="w-full sm:w-96">
+            <select id="select-profesor-horario" onchange="cargarHorarioDocente()" class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 font-semibold text-sm focus:ring-2 focus:ring-blue-600 bg-white">
+              <option value="">-- Seleccionar profesor para ver horario --</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Controles Modo 2: Radar por Día y Hora -->
+        <div id="controles-horario-radar" class="hidden pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs font-bold text-slate-600 uppercase tracking-wider mr-1">Día:</span>
+            <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-bold" id="radar-dias-btns">
+              <button type="button" onclick="setRadarDia(0)" data-dia="0" class="radar-dia-btn px-3 py-1.5 rounded-lg bg-white text-blue-900 shadow-xs">Lunes</button>
+              <button type="button" onclick="setRadarDia(1)" data-dia="1" class="radar-dia-btn px-3 py-1.5 rounded-lg text-slate-600">Martes</button>
+              <button type="button" onclick="setRadarDia(2)" data-dia="2" class="radar-dia-btn px-3 py-1.5 rounded-lg text-slate-600">Miércoles</button>
+              <button type="button" onclick="setRadarDia(3)" data-dia="3" class="radar-dia-btn px-3 py-1.5 rounded-lg text-slate-600">Jueves</button>
+              <button type="button" onclick="setRadarDia(4)" data-dia="4" class="radar-dia-btn px-3 py-1.5 rounded-lg text-slate-600">Viernes</button>
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs font-bold text-slate-600 uppercase tracking-wider mr-1">Hora:</span>
+            <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-bold" id="radar-horas-btns">
+              <button type="button" onclick="setRadarHora('1H')" data-hora="1H" class="radar-hora-btn px-3 py-1.5 rounded-lg bg-white text-blue-900 shadow-xs">1ª (09:05)</button>
+              <button type="button" onclick="setRadarHora('2H')" data-hora="2H" class="radar-hora-btn px-3 py-1.5 rounded-lg text-slate-600">2ª (10:05)</button>
+              <button type="button" onclick="setRadarHora('3H')" data-hora="3H" class="radar-hora-btn px-3 py-1.5 rounded-lg text-slate-600">3ª (11:35)</button>
+              <button type="button" onclick="setRadarHora('4H')" data-hora="4H" class="radar-hora-btn px-3 py-1.5 rounded-lg text-slate-600">4ª (14:30)</button>
+              <button type="button" onclick="setRadarHora('5H')" data-hora="5H" class="radar-hora-btn px-3 py-1.5 rounded-lg text-slate-600">5ª (15:30)</button>
+            </div>
+          </div>
         </div>
       </div>
 
       <div id="panel-horario-profesor" class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 overflow-x-auto min-h-[300px] flex items-center justify-center text-slate-400">
         Selecciona un profesor para consultar su horario semanal.
       </div>
+
+      <div id="panel-horario-radar" class="hidden space-y-4"></div>
     </section>
 
     <!-- ========================================== -->
@@ -377,20 +445,58 @@
     let evaluacionActual = null;
     let editandoSubId = null;
 
+    // Control de semana en Documento Word (0 = semana actual, null = todas)
+    let offsetSemana = 0;
+    let verTodasSemanas = false;
+
+    // Control de Radar de disponibilidad
+    let radarDia = 0;
+    let radarHora = "1H";
+
     document.addEventListener("DOMContentLoaded", () => {
       setHoy();
       cargarDatosIniciales();
     });
 
+    function toIsoLocal(d) {
+      const yr = d.getFullYear();
+      const mo = String(d.getMonth() + 1).padStart(2, "0");
+      const da = String(d.getDate()).padStart(2, "0");
+      return `${yr}-${mo}-${da}`;
+    }
+
     function setHoy() {
-      const today = new Date().toISOString().split("T")[0];
-      document.getElementById("input-fecha").value = today;
+      const d = new Date();
+      const day = d.getDay(); // 0 = Domingo, 6 = Sábado
+      if (day === 6) d.setDate(d.getDate() + 2);
+      else if (day === 0) d.setDate(d.getDate() + 1);
+      document.getElementById("input-fecha").value = toIsoLocal(d);
+      actualizarBadgeFecha();
     }
 
     function setManana() {
-      const d = new Date();
+      const inputVal = document.getElementById("input-fecha").value;
+      const d = inputVal ? new Date(inputVal + "T12:00:00") : new Date();
       d.setDate(d.getDate() + 1);
-      document.getElementById("input-fecha").value = d.toISOString().split("T")[0];
+      if (d.getDay() === 6) d.setDate(d.getDate() + 2);
+      else if (d.getDay() === 0) d.setDate(d.getDate() + 1);
+      document.getElementById("input-fecha").value = toIsoLocal(d);
+      actualizarBadgeFecha();
+    }
+
+    function actualizarBadgeFecha() {
+      const val = document.getElementById("input-fecha").value;
+      const badge = document.getElementById("badge-dia-seleccionado");
+      if (!val || !badge) return;
+      const d = new Date(val + "T12:00:00");
+      const diasNombres = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+      const meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+      const nombreDia = diasNombres[d.getDay()];
+      const esFinde = d.getDay() === 0 || d.getDay() === 6;
+      badge.textContent = `📅 ${nombreDia}, ${d.getDate()} ${meses[d.getMonth()]}`;
+      badge.className = esFinde
+        ? "px-2 py-0.5 rounded-lg bg-amber-100 text-amber-900 border border-amber-300 text-[11px] font-bold"
+        : "px-2 py-0.5 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 text-[11px] font-bold";
     }
 
     function ponerTareaSugerida(texto) {
@@ -579,15 +685,21 @@
     function renderResultadosMultiple(data) {
       const panel = document.getElementById("panel-resultados");
       const ausente = data.profesor_ausente;
+      const pendientesLectivas = data.tramos_evaluados.filter(t => t.tiene_clase_lectiva && !t.ya_asignada);
       
       let html = `
         <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/90 space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-3">
             <div>
-              <span class="text-[11px] font-black uppercase text-blue-600 tracking-wider">Plan de Sustitución para el Día</span>
-              <h3 class="text-base font-extrabold text-slate-900">${ausente.nombre} (${ausente.etapa})</h3>
+              <span class="text-[11px] font-black uppercase text-blue-600 tracking-wider">Plan de Sustitución para el Día (Reparto Equitativo Activado)</span>
+              <h3 class="text-base font-extrabold text-slate-900">${ausente.nombre} (${ausente.etapa}) · <span class="text-slate-500 font-bold text-xs">${data.fecha}</span></h3>
             </div>
-            <span class="text-xs font-bold text-slate-500">${data.fecha}</span>
+            ${pendientesLectivas.length > 0 ? `
+              <button onclick="confirmarDiaCompleto()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-2xl shadow-md transition flex items-center gap-1.5 shrink-0">
+                <i class="ph-bold ph-checks text-base"></i>
+                <span>Confirmar las ${pendientesLectivas.length} horas lectivas (1 clic)</span>
+              </button>
+            ` : ''}
           </div>
 
           <div class="space-y-3">
@@ -768,6 +880,59 @@
       panel.innerHTML = html;
     }
 
+    async function confirmarDiaCompleto() {
+      if (!evaluacionActual) return;
+      const fecha = evaluacionActual.fecha;
+      const ausenteId = evaluacionActual.profesor_ausente.id;
+      const pendientes = evaluacionActual.tramos_evaluados.filter(t => t.tiene_clase_lectiva && !t.ya_asignada);
+
+      if (pendientes.length === 0) {
+        showToast("Todas las horas lectivas del día ya están asignadas.", "info");
+        return;
+      }
+
+      const asignaciones = [];
+      for (const tramo of pendientes) {
+        const sel = document.getElementById("select-sustituto-" + tramo.periodo_id);
+        const inp = document.getElementById("input-tarea-" + tramo.periodo_id);
+        if (sel && sel.value) {
+          asignaciones.push({
+            periodo_id: tramo.periodo_id,
+            profesor_sustituto_id: sel.value,
+            aula: tramo.aula,
+            curso_grupo: tramo.curso_grupo,
+            materia: tramo.materia,
+            que_hacer: inp ? inp.value.trim() : ""
+          });
+        }
+      }
+
+      if (asignaciones.length === 0) {
+        showToast("No hay sustitutos seleccionados para asignar.", "warning");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/asignar-sustituciones-multiple", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fecha: fecha,
+            profesor_ausente_id: ausenteId,
+            asignaciones: asignaciones
+          })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        showToast(`¡${data.total_asignadas} horas del día confirmadas en 1 clic!`, "success");
+        await buscarSustitutos();
+        await cargarDatosIniciales();
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
     async function asignarTramoIndividual(periodoId) {
       if (!evaluacionActual) return;
       const fecha = evaluacionActual.fecha;
@@ -846,6 +1011,43 @@
       }
     }
 
+    function obtenerRangoSemana(offset = 0) {
+      const refVal = document.getElementById("input-fecha")?.value;
+      const base = refVal ? new Date(refVal + "T12:00:00") : new Date();
+      const day = base.getDay(); // 0=Dom, 1=Lun...
+      const diffToMonday = day === 0 ? -6 : 1 - day;
+      const lunes = new Date(base);
+      lunes.setDate(base.getDate() + diffToMonday + (offset * 7));
+      const viernes = new Date(lunes);
+      viernes.setDate(lunes.getDate() + 4);
+      const domingo = new Date(lunes);
+      domingo.setDate(lunes.getDate() + 6);
+      return {
+        inicio: toIsoLocal(lunes),
+        finViernes: toIsoLocal(viernes),
+        fin: toIsoLocal(domingo)
+      };
+    }
+
+    function cambiarSemanaFiltro(delta) {
+      verTodasSemanas = false;
+      if (delta === 0) offsetSemana = 0;
+      else offsetSemana += delta;
+      renderTablaSustituciones();
+    }
+
+    function mostrarTodasSemanas() {
+      verTodasSemanas = true;
+      renderTablaSustituciones();
+    }
+
+    function obtenerSustitucionesFiltradas() {
+      if (!sustitucionesData) return [];
+      if (verTodasSemanas) return sustitucionesData.slice();
+      const rango = obtenerRangoSemana(offsetSemana);
+      return sustitucionesData.filter(s => s.fecha >= rango.inicio && s.fecha <= rango.fin);
+    }
+
     async function cargarSustituciones() {
       try {
         const res = await fetch("/api/sustituciones");
@@ -858,21 +1060,57 @@
 
     function renderTablaSustituciones() {
       const tbody = document.getElementById("tbody-sustituciones");
-      if (!sustitucionesData || sustitucionesData.length === 0) {
+      const etq = document.getElementById("etiqueta-rango-semana");
+      const btnDocx = document.getElementById("btn-descargar-docx");
+      const btnActual = document.getElementById("btn-semana-actual");
+      const btnTodas = document.getElementById("btn-semana-todas");
+
+      if (verTodasSemanas) {
+        if (etq) etq.textContent = `📚 Mostrando todas las semanas (${sustitucionesData.length} registros)`;
+        if (btnDocx) btnDocx.href = "/api/export-docx";
+        if (btnTodas) btnTodas.className = "px-3 py-1.5 rounded-xl bg-white text-blue-900 shadow-xs transition";
+        if (btnActual) btnActual.className = "px-3 py-1.5 rounded-xl hover:bg-white text-slate-600 transition";
+      } else {
+        const rango = obtenerRangoSemana(offsetSemana);
+        if (etq) etq.textContent = `📅 Semana del ${rango.inicio} al ${rango.finViernes}`;
+        if (btnDocx) btnDocx.href = `/api/export-docx?fecha_inicio=${rango.inicio}&fecha_fin=${rango.fin}`;
+        if (btnActual) btnActual.className = offsetSemana === 0
+          ? "px-3 py-1.5 rounded-xl bg-white text-blue-900 shadow-xs transition"
+          : "px-3 py-1.5 rounded-xl hover:bg-white text-slate-600 transition";
+        if (btnTodas) btnTodas.className = "px-3 py-1.5 rounded-xl hover:bg-white text-slate-600 transition";
+      }
+
+      const lista = obtenerSustitucionesFiltradas();
+      if (!lista || lista.length === 0) {
         tbody.innerHTML = `
           <tr>
             <td colspan="8" class="text-center py-12 text-slate-400 font-semibold">
-              No hay sustituciones registradas aún en el documento compartido.
+              No hay sustituciones registradas en este periodo.
             </td>
           </tr>
         `;
         return;
       }
 
-      const ordenadas = sustitucionesData.slice().sort((a,b) => (b.fecha + b.periodo_id).localeCompare(a.fecha + a.periodo_id));
+      // Orden cronológico real: primero por fecha ascendente y dentro del mismo día 1H -> 2H -> 3H -> 4H -> 5H
+      const ordenadas = lista.slice().sort((a,b) => (a.fecha + a.periodo_id).localeCompare(b.fecha + b.periodo_id));
+      const diasNombres = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
       let html = "";
+      let ultimaFecha = null;
       ordenadas.forEach((s, idx) => {
+        if (s.fecha !== ultimaFecha) {
+          ultimaFecha = s.fecha;
+          const dObj = new Date(s.fecha + "T12:00:00");
+          const diaSemanaStr = diasNombres[dObj.getDay()] || "";
+          html += `
+            <tr class="bg-blue-50/80 border-y border-blue-200/70">
+              <td colspan="8" class="py-2 px-4 text-xs font-black text-blue-950 uppercase tracking-wider">
+                📅 ${diaSemanaStr} · ${s.fecha}
+              </td>
+            </tr>
+          `;
+        }
         const bg = idx % 2 === 0 ? "bg-white" : "bg-slate-50/60";
         const tarea = s.que_hacer || s.observaciones || "—";
         html += `
@@ -949,21 +1187,22 @@
     }
 
     async function copiarTablaHoy() {
-      const hoy = new Date().toISOString().split("T")[0];
-      const deHoy = sustitucionesData.filter(s => s.fecha === hoy);
+      const fechaRef = document.getElementById("input-fecha")?.value || toIsoLocal(new Date());
+      const deHoy = sustitucionesData.filter(s => s.fecha === fechaRef);
       if (deHoy.length === 0) {
-        showToast("No hay sustituciones registradas para el día de hoy.", "warning");
+        showToast(`No hay sustituciones registradas para la fecha ${fechaRef}.`, "warning");
         return;
       }
-      copiarSubconjuntoTabla(deHoy, `Sustituciones de Hoy (${hoy})`);
+      copiarSubconjuntoTabla(deHoy, `Sustituciones del día (${fechaRef})`);
     }
 
     async function copiarTablaParaWord() {
-      if (!sustitucionesData || sustitucionesData.length === 0) {
-        showToast("No hay sustituciones registradas para copiar.", "warning");
+      const lista = obtenerSustitucionesFiltradas();
+      if (!lista || lista.length === 0) {
+        showToast("No hay sustituciones registradas en la vista actual para copiar.", "warning");
         return;
       }
-      copiarSubconjuntoTabla(sustitucionesData, "Cuadrante Semanal Completo");
+      copiarSubconjuntoTabla(lista, "Cuadrante Semanal");
     }
 
     async function copiarSubconjuntoTabla(lista, titulo) {
@@ -1068,6 +1307,102 @@
         cargarSustituciones();
       } catch (err) {
         showToast(err.message, "error");
+      }
+    }
+
+    function switchSubtabHorarios(modo) {
+      const btnProf = document.getElementById("btn-subtab-prof");
+      const btnRadar = document.getElementById("btn-subtab-radar");
+      const ctrlProf = document.getElementById("controles-horario-profesor");
+      const ctrlRadar = document.getElementById("controles-horario-radar");
+      const panelProf = document.getElementById("panel-horario-profesor");
+      const panelRadar = document.getElementById("panel-horario-radar");
+
+      if (modo === "profesor") {
+        btnProf.className = "px-3.5 py-2 rounded-xl bg-white text-blue-900 shadow-xs transition flex items-center gap-1.5";
+        btnRadar.className = "px-3.5 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5";
+        ctrlProf.classList.remove("hidden");
+        ctrlRadar.classList.add("hidden");
+        panelProf.classList.remove("hidden");
+        panelRadar.classList.add("hidden");
+      } else {
+        btnRadar.className = "px-3.5 py-2 rounded-xl bg-white text-blue-900 shadow-xs transition flex items-center gap-1.5";
+        btnProf.className = "px-3.5 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5";
+        ctrlProf.classList.add("hidden");
+        ctrlRadar.classList.remove("hidden");
+        panelProf.classList.add("hidden");
+        panelRadar.classList.remove("hidden");
+        cargarRadarDisponibilidad();
+      }
+    }
+
+    function setRadarDia(diaIdx) {
+      radarDia = diaIdx;
+      document.querySelectorAll(".radar-dia-btn").forEach(btn => {
+        if (Number(btn.dataset.dia) === diaIdx) {
+          btn.className = "radar-dia-btn px-3 py-1.5 rounded-lg bg-white text-blue-900 shadow-xs";
+        } else {
+          btn.className = "radar-dia-btn px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900";
+        }
+      });
+      cargarRadarDisponibilidad();
+    }
+
+    function setRadarHora(horaId) {
+      radarHora = horaId;
+      document.querySelectorAll(".radar-hora-btn").forEach(btn => {
+        if (btn.dataset.hora === horaId) {
+          btn.className = "radar-hora-btn px-3 py-1.5 rounded-lg bg-white text-blue-900 shadow-xs";
+        } else {
+          btn.className = "radar-hora-btn px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900";
+        }
+      });
+      cargarRadarDisponibilidad();
+    }
+
+    async function cargarRadarDisponibilidad() {
+      const panel = document.getElementById("panel-horario-radar");
+      panel.innerHTML = `
+        <div class="bg-white rounded-3xl p-8 text-center border border-slate-200 shadow-sm">
+          <i class="ph ph-spinner animate-spin text-3xl text-blue-600"></i>
+        </div>
+      `;
+      try {
+        const res = await fetch(`/api/disponibilidad-tramo?dia_semana=${radarDia}&periodo_id=${radarHora}`);
+        const data = await res.json();
+
+        const renderCol = (titulo, subtitulo, items, bgHeader, badgeClass) => `
+          <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col">
+            <div class="${bgHeader} px-4 py-3 text-white flex items-center justify-between">
+              <div>
+                <h4 class="text-xs font-black uppercase tracking-wider">${titulo}</h4>
+                <p class="text-[11px] opacity-85">${subtitulo}</p>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full bg-white/20 text-white font-black text-xs">${items.length}</span>
+            </div>
+            <div class="p-3 space-y-2 flex-1">
+              ${items.length === 0 ? `<p class="text-xs text-slate-400 italic text-center py-4">Ningún profesor en este bloque</p>` : items.map(it => `
+                <div class="p-2.5 rounded-2xl border border-slate-100 bg-slate-50/70 flex items-center justify-between gap-2">
+                  <div class="min-w-0">
+                    <div class="font-bold text-xs text-slate-900 truncate">${it.nombre}</div>
+                    <div class="text-[11px] text-slate-500">${it.etapa} · <span class="font-semibold">${it.detalle}</span></div>
+                  </div>
+                  <span class="${badgeClass} px-2 py-0.5 rounded-lg text-[10px] font-extrabold shrink-0">${it.sustituciones_realizadas} sust.</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+
+        panel.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            ${renderCol("1º Prioridad: En Guardia", "Disponibilidad inmediata", data.guardias, "bg-emerald-700", "bg-emerald-100 text-emerald-800")}
+            ${renderCol("2º Prioridad: Reunión / No Lectiva", "Tutoría, Dpto. o Coordinación", data.reuniones, "bg-blue-800", "bg-blue-100 text-blue-800")}
+            ${renderCol("3º Prioridad: En Apoyo", "Última opción de cobertura", data.apoyos, "bg-purple-800", "bg-purple-100 text-purple-800")}
+          </div>
+        `;
+      } catch (err) {
+        panel.innerHTML = `<div class="p-4 rounded-2xl bg-rose-50 text-rose-800 text-xs font-bold">Error cargando disponibilidad: ${err.message}</div>`;
       }
     }
 

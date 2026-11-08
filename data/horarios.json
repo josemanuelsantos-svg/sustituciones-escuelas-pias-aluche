@@ -4725,6 +4725,231 @@
     "descripcion": "Ciencias de la Naturaleza (2º EP-C)"
   },
   {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 0,
+    "periodo_id": "1H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-B",
+    "materia": "Matemáticas",
+    "descripcion": "Matemáticas (3º EP-B)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 1,
+    "periodo_id": "1H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-B",
+    "materia": "Matemáticas",
+    "descripcion": "Matemáticas (3º EP-B)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 2,
+    "periodo_id": "1H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-B",
+    "materia": "Matemáticas",
+    "descripcion": "Matemáticas (3º EP-B)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 3,
+    "periodo_id": "1H",
+    "tipo_actividad": "GUARDIA",
+    "aula": "",
+    "materia": "",
+    "descripcion": "Guardia"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 4,
+    "periodo_id": "1H",
+    "tipo_actividad": "REUNION",
+    "aula": "",
+    "materia": "",
+    "descripcion": "ARTES"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 0,
+    "periodo_id": "2H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-B",
+    "materia": "Lengua Castellana y Literatura",
+    "descripcion": "Lengua Castellana y Literatura (3º EP-B)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 1,
+    "periodo_id": "2H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-A",
+    "materia": "Ciencias Sociales",
+    "descripcion": "Ciencias Sociales (3º EP-A)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 2,
+    "periodo_id": "2H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-B",
+    "materia": "Religión",
+    "descripcion": "Religión (3º EP-B)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 3,
+    "periodo_id": "2H",
+    "tipo_actividad": "APOYO",
+    "aula": "",
+    "materia": "",
+    "descripcion": "APOYO"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 4,
+    "periodo_id": "2H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-B",
+    "materia": "Ciencias de la Naturaleza",
+    "descripcion": "Ciencias de la Naturaleza (3º EP-B)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 0,
+    "periodo_id": "3H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-A",
+    "materia": "Ciencias Sociales",
+    "descripcion": "Ciencias Sociales (3º EP-A)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 1,
+    "periodo_id": "3H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-B",
+    "materia": "Lengua Castellana y Literatura",
+    "descripcion": "Lengua Castellana y Literatura (3º EP-B)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 2,
+    "periodo_id": "3H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-B",
+    "materia": "Lengua Castellana y Literatura",
+    "descripcion": "Lengua Castellana y Literatura (3º EP-B)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 3,
+    "periodo_id": "3H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-B",
+    "materia": "Religión",
+    "descripcion": "Religión (3º EP-B)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 4,
+    "periodo_id": "3H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-B",
+    "materia": "Matemáticas",
+    "descripcion": "Matemáticas (3º EP-B)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 0,
+    "periodo_id": "4H",
+    "tipo_actividad": "APOYO",
+    "aula": "",
+    "materia": "",
+    "descripcion": "APOYO"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 1,
+    "periodo_id": "4H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-B",
+    "materia": "Ciencias Sociales",
+    "descripcion": "Ciencias Sociales (3º EP-B)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 2,
+    "periodo_id": "4H",
+    "tipo_actividad": "APOYO",
+    "aula": "",
+    "materia": "",
+    "descripcion": "APOYO"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 3,
+    "periodo_id": "4H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-B",
+    "materia": "Matemáticas",
+    "descripcion": "Matemáticas (3º EP-B)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 4,
+    "periodo_id": "4H",
+    "tipo_actividad": "REUNION",
+    "aula": "",
+    "materia": "",
+    "descripcion": "PROYECTOS"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 0,
+    "periodo_id": "5H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-B",
+    "materia": "Ciencias Sociales",
+    "descripcion": "Ciencias Sociales (3º EP-B)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 1,
+    "periodo_id": "5H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-B",
+    "materia": "Lengua Castellana y Literatura",
+    "descripcion": "Lengua Castellana y Literatura (3º EP-B)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 2,
+    "periodo_id": "5H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-B",
+    "materia": "Ciencias de la Naturaleza",
+    "descripcion": "Ciencias de la Naturaleza (3º EP-B)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 3,
+    "periodo_id": "5H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-B",
+    "materia": "Lengua Castellana y Literatura",
+    "descripcion": "Lengua Castellana y Literatura (3º EP-B)"
+  },
+  {
+    "profesor_id": "ponce_centeno_m_luisa",
+    "dia_semana": 4,
+    "periodo_id": "5H",
+    "tipo_actividad": "LECTIVA",
+    "aula": "3º EP-B",
+    "materia": "Lengua Castellana y Literatura",
+    "descripcion": "Lengua Castellana y Literatura (3º EP-B)"
+  },
+  {
     "profesor_id": "morales_gonzalez_m_luz",
     "dia_semana": 0,
     "periodo_id": "1H",
@@ -5623,231 +5848,6 @@
     "aula": "1º EP-C",
     "materia": "Ciencias Sociales",
     "descripcion": "Ciencias Sociales (1º EP-C)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 0,
-    "periodo_id": "1H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-B",
-    "materia": "Matemáticas",
-    "descripcion": "Matemáticas (3º EP-B)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 1,
-    "periodo_id": "1H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-B",
-    "materia": "Matemáticas",
-    "descripcion": "Matemáticas (3º EP-B)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 2,
-    "periodo_id": "1H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-B",
-    "materia": "Matemáticas",
-    "descripcion": "Matemáticas (3º EP-B)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 3,
-    "periodo_id": "1H",
-    "tipo_actividad": "GUARDIA",
-    "aula": "",
-    "materia": "",
-    "descripcion": "Guardia"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 4,
-    "periodo_id": "1H",
-    "tipo_actividad": "REUNION",
-    "aula": "",
-    "materia": "",
-    "descripcion": "ARTES"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 0,
-    "periodo_id": "2H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-B",
-    "materia": "Lengua Castellana y Literatura",
-    "descripcion": "Lengua Castellana y Literatura (3º EP-B)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 1,
-    "periodo_id": "2H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-A",
-    "materia": "Ciencias Sociales",
-    "descripcion": "Ciencias Sociales (3º EP-A)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 2,
-    "periodo_id": "2H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-B",
-    "materia": "Religión",
-    "descripcion": "Religión (3º EP-B)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 3,
-    "periodo_id": "2H",
-    "tipo_actividad": "APOYO",
-    "aula": "",
-    "materia": "",
-    "descripcion": "APOYO"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 4,
-    "periodo_id": "2H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-B",
-    "materia": "Ciencias de la Naturaleza",
-    "descripcion": "Ciencias de la Naturaleza (3º EP-B)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 0,
-    "periodo_id": "3H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-A",
-    "materia": "Ciencias Sociales",
-    "descripcion": "Ciencias Sociales (3º EP-A)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 1,
-    "periodo_id": "3H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-B",
-    "materia": "Lengua Castellana y Literatura",
-    "descripcion": "Lengua Castellana y Literatura (3º EP-B)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 2,
-    "periodo_id": "3H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-B",
-    "materia": "Lengua Castellana y Literatura",
-    "descripcion": "Lengua Castellana y Literatura (3º EP-B)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 3,
-    "periodo_id": "3H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-B",
-    "materia": "Religión",
-    "descripcion": "Religión (3º EP-B)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 4,
-    "periodo_id": "3H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-B",
-    "materia": "Matemáticas",
-    "descripcion": "Matemáticas (3º EP-B)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 0,
-    "periodo_id": "4H",
-    "tipo_actividad": "APOYO",
-    "aula": "",
-    "materia": "",
-    "descripcion": "APOYO"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 1,
-    "periodo_id": "4H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-B",
-    "materia": "Ciencias Sociales",
-    "descripcion": "Ciencias Sociales (3º EP-B)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 2,
-    "periodo_id": "4H",
-    "tipo_actividad": "APOYO",
-    "aula": "",
-    "materia": "",
-    "descripcion": "APOYO"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 3,
-    "periodo_id": "4H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-B",
-    "materia": "Matemáticas",
-    "descripcion": "Matemáticas (3º EP-B)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 4,
-    "periodo_id": "4H",
-    "tipo_actividad": "REUNION",
-    "aula": "",
-    "materia": "",
-    "descripcion": "PROYECTOS"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 0,
-    "periodo_id": "5H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-B",
-    "materia": "Ciencias Sociales",
-    "descripcion": "Ciencias Sociales (3º EP-B)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 1,
-    "periodo_id": "5H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-B",
-    "materia": "Lengua Castellana y Literatura",
-    "descripcion": "Lengua Castellana y Literatura (3º EP-B)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 2,
-    "periodo_id": "5H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-B",
-    "materia": "Ciencias de la Naturaleza",
-    "descripcion": "Ciencias de la Naturaleza (3º EP-B)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 3,
-    "periodo_id": "5H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-B",
-    "materia": "Lengua Castellana y Literatura",
-    "descripcion": "Lengua Castellana y Literatura (3º EP-B)"
-  },
-  {
-    "profesor_id": "ponce_centeno_m_luisa",
-    "dia_semana": 4,
-    "periodo_id": "5H",
-    "tipo_actividad": "LECTIVA",
-    "aula": "3º EP-B",
-    "materia": "Lengua Castellana y Literatura",
-    "descripcion": "Lengua Castellana y Literatura (3º EP-B)"
   },
   {
     "profesor_id": "chacon_chavarria_raquel",

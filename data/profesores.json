@@ -7,7 +7,7 @@
     "departamento": "Primaria",
     "etapa": "Primaria",
     "activo": true,
-    "sustituciones_realizadas": 1
+    "sustituciones_realizadas": 0
   },
   {
     "id": "carrion_ramiro_ana",
@@ -101,7 +101,7 @@
   },
   {
     "id": "garcia_sama_hilda_aurora",
-    "nombre": "Hilda Aurora Garcia Sama",
+    "nombre": "Hilda Aurora García Sama",
     "telefono": "",
     "email": "garcia_sama_hilda_aurora@escolapiosaluche.com",
     "departamento": "Infantil",
@@ -210,6 +210,16 @@
     "sustituciones_realizadas": 0
   },
   {
+    "id": "ponce_centeno_m_luisa",
+    "nombre": "Mª Luisa Ponce Centeno",
+    "telefono": "",
+    "email": "ponce_centeno_m_luisa@escolapiosaluche.com",
+    "departamento": "Primaria",
+    "etapa": "Primaria",
+    "activo": true,
+    "sustituciones_realizadas": 0
+  },
+  {
     "id": "morales_gonzalez_m_luz",
     "nombre": "Mª Luz Morales González",
     "telefono": "",
@@ -241,19 +251,9 @@
   },
   {
     "id": "virseda_de_andres_m_teresa",
-    "nombre": "Mª.Teresa Vírseda de Andrés",
+    "nombre": "Mª Teresa Vírseda de Andrés",
     "telefono": "",
     "email": "virseda_de_andres_m_teresa@escolapiosaluche.com",
-    "departamento": "Primaria",
-    "etapa": "Primaria",
-    "activo": true,
-    "sustituciones_realizadas": 0
-  },
-  {
-    "id": "ponce_centeno_m_luisa",
-    "nombre": "MªLuisa Ponce Centeno",
-    "telefono": "",
-    "email": "ponce_centeno_m_luisa@escolapiosaluche.com",
     "departamento": "Primaria",
     "etapa": "Primaria",
     "activo": true,

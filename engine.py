@@ -25,7 +25,8 @@ class SubstitutionEngine:
         periodo_id: str,
         profesor_ausente_id: str,
         materia: Optional[str] = None,
-        aula: Optional[str] = None
+        aula: Optional[str] = None,
+        extra_loads: Optional[Dict[str, int]] = None
     ) -> Dict[str, Any]:
         """
         Encuentra y clasifica a todos los candidatos disponibles para cubrir una ausencia,
@@ -147,7 +148,8 @@ class SubstitutionEngine:
 
             # Afinidad de etapa: Primaria a Primaria, Infantil a Infantil
             etapa_docente = (docente.etapa or "Primaria").strip().lower()
-            misma_etapa = (etapa_docente == etapa_ausente) or ("mixta" in etapa_docente)
+            depto_docente = (docente.departamento or "").strip().lower()
+            misma_etapa = (etapa_docente == etapa_ausente) or (etapa_ausente in depto_docente) or ("mixta" in etapa_docente)
 
             if misma_etapa:
                 # Priorizar docentes de la misma etapa
@@ -157,8 +159,9 @@ class SubstitutionEngine:
                 etapa_bonus = 0.0
                 motivo_etapa = f"Otra etapa ({docente.etapa})"
 
-            # Equidad: restar penalización leve por cada sustitución acumulada para romper empates
-            penalizacion_carga = docente.sustituciones_realizadas * 2.0
+            # Equidad: restar penalización por cada sustitución acumulada + carga provisional del día
+            carga_hoy = (extra_loads or {}).get(docente.id, 0)
+            penalizacion_carga = (docente.sustituciones_realizadas * 2.0) + (carga_hoy * 15.0)
 
             puntuacion_total = base_score + etapa_bonus - penalizacion_carga
 
@@ -166,7 +169,7 @@ class SubstitutionEngine:
             motivos = [
                 f"{categoria_nombre} ({motivo_tipo})",
                 motivo_etapa,
-                f"{docente.sustituciones_realizadas} sustituciones previas"
+                f"{docente.sustituciones_realizadas} sustituciones previas" + (f" (+{carga_hoy} hoy)" if carga_hoy > 0 else "")
             ]
 
             candidatos_evaluados.append(SubstitutionCandidate(

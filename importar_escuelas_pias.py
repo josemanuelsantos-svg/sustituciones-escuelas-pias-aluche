@@ -122,8 +122,14 @@ def format_teacher_name(raw_name: str) -> str:
         parts = raw_name.split(",", 1)
         apellidos = parts[0].strip()
         nombre = parts[1].strip()
-        return f"{nombre} {apellidos}"
-    return raw_name
+        full = f"{nombre} {apellidos}"
+    else:
+        full = raw_name
+    # Limpiar "Mª.Teresa" o "MªLuisa" -> "Mª Teresa", "Mª Luisa"
+    full = re.sub(r"Mª\.?\s*", "Mª ", full)
+    full = full.replace("Garcia Sama", "García Sama")
+    full = re.sub(r"\s+", " ", full).strip()
+    return full
 
 def generate_teacher_id(raw_name: str) -> str:
     cleaned = strip_accents(raw_name).lower()
