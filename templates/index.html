@@ -6,6 +6,10 @@
   <meta name="theme-color" content="#1e3a8a">
   <title>Sustituciones · Escuelas Pías Aluche (Vero)</title>
   
+  <!-- Favicon e Iconos Escuelas Pías -->
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/escudo_escolapios_180.png') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/escudo_escolapios_180.png') }}">
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Phosphor Icons -->
@@ -44,14 +48,14 @@
   <!-- Toast Container -->
   <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none"></div>
 
-  <!-- Header / Navbar -->
+  <!-- Header / Navbar con Logo Oficial Escuelas Pías -->
   <header class="bg-gradient-to-r from-[#0f172a] via-[#1e3a8a] to-[#1d4ed8] text-white shadow-lg sticky top-0 z-30 border-b border-blue-400/20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-3">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-3">
       
-      <!-- Brand Escuelas Pías Aluche -->
-      <div class="flex items-center gap-3.5 cursor-pointer" onclick="switchTab('asignar')">
-        <div class="w-11 h-11 rounded-2xl bg-white text-blue-900 flex items-center justify-center font-black text-xl shadow-md ring-2 ring-blue-300/40 shrink-0">
-          <i class="ph-bold ph-graduation-cap text-blue-900 text-2xl"></i>
+      <!-- Brand Escuelas Pías Aluche con Logo Oficial -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('asignar')">
+        <div class="h-11 px-2.5 py-1 rounded-2xl bg-white/95 text-blue-900 flex items-center justify-center shadow-md ring-2 ring-blue-300/40 shrink-0">
+          <img src="{{ url_for('static', filename='img/logo_escuelas_pias.png') }}" alt="Colegio Nuestra Señora de las Escuelas Pías Aluche" class="h-8 w-auto object-contain">
         </div>
         <div>
           <div class="flex items-center gap-2">
@@ -62,7 +66,7 @@
               Vero
             </span>
           </div>
-          <p class="text-xs text-blue-200 font-medium">Sistema de Sustituciones · Infantil y Primaria</p>
+          <p class="text-xs text-blue-200 font-medium">Gestión de Sustituciones · Infantil y Primaria</p>
         </div>
       </div>
 
@@ -101,12 +105,12 @@
         <div>
           <div class="flex items-center gap-2 mb-1">
             <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-blue-500/30 text-blue-200 border border-blue-400/30 uppercase tracking-wider">
-              Criterios del Centro
+              Criterios de Escuelas Pías Aluche
             </span>
             <span class="text-xs text-slate-300">• Coordinación Vero</span>
           </div>
           <h2 class="text-lg sm:text-xl font-black text-white">
-            Orden de selección: 1º Guardia ➔ 2º Reuniones ➔ 3º Apoyos
+            Orden de prelación: 1º Guardia ➔ 2º Reuniones ➔ 3º Apoyos
           </h2>
           <p class="text-xs sm:text-sm text-blue-200/90 mt-1">
             • <strong>Solo se cubren horas de clase</strong> (las horas de guardia, reunión o apoyo no se cubren).<br>
@@ -161,7 +165,7 @@
 
           <!-- 3. Selección de Modo: Día Completo vs Hora Concreta -->
           <div class="pt-2">
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Alcance de la sustitución</label>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Alcance de la ausencia</label>
             <div class="grid grid-cols-2 gap-2">
               <button type="button" onclick="setModoAusencia('dia_completo')" id="btn-modo-dia" class="p-3 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-blue-900 font-extrabold text-xs flex items-center justify-center gap-1.5 transition">
                 <i class="ph-bold ph-sun text-base"></i>
@@ -184,6 +188,28 @@
               <option value="4H">4ª Hora (14:30 - 15:30)</option>
               <option value="5H">5ª Hora (15:30 - 16:30)</option>
             </select>
+          </div>
+
+          <!-- Sugerencias Rápidas de Tarea ("Qué deben hacer") -->
+          <div class="pt-2">
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Plantillas de Tarea Rápida</label>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" onclick="ponerTareaSugerida('Ejercicios del libro y corregir en pizarra')" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-blue-100 hover:text-blue-900 text-slate-600 text-[11px] font-semibold transition">
+                📖 Ejercicios del libro
+              </button>
+              <button type="button" onclick="ponerTareaSugerida('Ficha de trabajo dejada en conserjería / aula')" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-blue-100 hover:text-blue-900 text-slate-600 text-[11px] font-semibold transition">
+                📄 Ficha en conserjería
+              </button>
+              <button type="button" onclick="ponerTareaSugerida('Lectura silenciosa y redacción de resumen')" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-blue-100 hover:text-blue-900 text-slate-600 text-[11px] font-semibold transition">
+                📚 Lectura y resumen
+              </button>
+              <button type="button" onclick="ponerTareaSugerida('Trabajo digital con Chromebooks / Classroom')" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-blue-100 hover:text-blue-900 text-slate-600 text-[11px] font-semibold transition">
+                💻 Tarea en Classroom
+              </button>
+              <button type="button" onclick="ponerTareaSugerida('Repaso de la unidad para el examen')" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-blue-100 hover:text-blue-900 text-slate-600 text-[11px] font-semibold transition">
+                ✍️ Repaso examen
+              </button>
+            </div>
           </div>
 
           <!-- Botón de Búsqueda -->
@@ -222,7 +248,7 @@
     <section id="tab-cuadrante" class="tab-content hidden space-y-6 animate-fade-in">
       
       <!-- Barra Superior de Controles del Documento Word -->
-      <div class="bg-white rounded-3xl p-5 shadow-md border border-slate-200/80 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="bg-white rounded-3xl p-5 shadow-md border border-slate-200/80 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
         <div>
           <div class="flex items-center gap-2">
             <h2 class="text-lg font-black text-slate-900">Documento Compartido de Sustituciones</h2>
@@ -231,15 +257,20 @@
             </span>
           </div>
           <p class="text-xs text-slate-500 mt-0.5">
-            Las 6 columnas exactas del centro: Quién falta, Hora, Clase, Asignatura, Quién sustituye y Qué deben hacer en su hora.
+            Las 6 columnas del centro: Quién falta, Hora, Clase, Asignatura, Quién sustituye y Qué deben hacer en su hora.
           </p>
         </div>
 
         <!-- Botones de Acción para Word / Drive -->
-        <div class="flex flex-wrap items-center gap-2.5">
-          <button onclick="copiarTablaParaWord()" class="px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-extrabold text-xs sm:text-sm rounded-2xl border border-indigo-200 transition flex items-center gap-2 shadow-xs" title="Copia la tabla con formato enriquecido para pegar directamente en Word o Google Docs">
-            <i class="ph-bold ph-copy text-base"></i>
-            <span>Copiar para Word / Drive</span>
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="copiarTablaHoy()" class="px-3.5 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-800 font-extrabold text-xs rounded-2xl border border-blue-200 transition flex items-center gap-1.5 shadow-xs" title="Copia solo las sustituciones del día de hoy">
+            <i class="ph-bold ph-calendar text-sm"></i>
+            <span>Copiar Solo Hoy</span>
+          </button>
+
+          <button onclick="copiarTablaParaWord()" class="px-3.5 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-extrabold text-xs rounded-2xl border border-indigo-200 transition flex items-center gap-1.5 shadow-xs" title="Copia toda la tabla semanal con formato para pegar en Word o Google Docs">
+            <i class="ph-bold ph-copy text-sm"></i>
+            <span>Copiar Tabla Semanal</span>
           </button>
           
           <a id="btn-descargar-docx" href="/api/export-docx" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs sm:text-sm rounded-2xl shadow-md transition flex items-center gap-2">
@@ -366,6 +397,18 @@
       document.getElementById("input-fecha").value = d.toISOString().split("T")[0];
     }
 
+    function ponerTareaSugerida(texto) {
+      // Si estamos en modo individual
+      const inputInd = document.getElementById("input-tarea-individual");
+      if (inputInd) inputInd.value = texto;
+
+      // O si hay inputs de tareas en tramos múltiples
+      document.querySelectorAll("input[id^='input-tarea-']").forEach(inp => {
+        if (!inp.value) inp.value = texto;
+      });
+      showToast(`Tarea aplicada: "${texto.substring(0, 30)}..."`, "info");
+    }
+
     function switchTab(tabId) {
       document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
       document.querySelectorAll(".tab-btn").forEach(btn => {
@@ -472,9 +515,7 @@
       document.getElementById("panel-resultados").classList.add("hidden");
     }
 
-    function onPeriodoChange() {
-      // Si cambia el tramo en hora individual
-    }
+    function onPeriodoChange() {}
 
     async function buscarSustitutos() {
       const fecha = document.getElementById("input-fecha").value;
@@ -594,8 +635,11 @@
 
         if (yaAsignada) {
           html += `
-            <div class="text-xs text-slate-600 mt-2 bg-white p-2.5 rounded-xl border border-slate-200">
-              <strong>Tarea asignada:</strong> ${yaAsignada.observaciones || '—'}
+            <div class="text-xs text-slate-600 mt-2 bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between">
+              <div><strong>Tarea:</strong> ${yaAsignada.observaciones || '—'}</div>
+              <button onclick="copiarMensajeWhatsApp('${yaAsignada.profesor_sustituto_nombre}', '${tramo.periodo_nombre}', '${ausente.nombre}', '${tramo.curso_grupo}', '${tramo.materia}', '${yaAsignada.observaciones}')" class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold flex items-center gap-1 hover:bg-emerald-100">
+                <i class="ph-bold ph-whatsapp-logo text-emerald-600"></i> Copiar WhatsApp
+              </button>
             </div>
           </div>`;
           return;
@@ -685,7 +729,7 @@
         </div>
 
         <div class="space-y-3 pt-2">
-          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Candidatos Disponibles (Ordenados por Guardia ➔ Reunión ➔ Apoyo y Menor Carga)</label>
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Candidatos Disponibles (1º Guardia ➔ 2º Reunión ➔ 3º Apoyo y Menor Carga)</label>
           <div class="max-h-72 overflow-y-auto space-y-2 pr-1">
       `;
 
@@ -765,7 +809,7 @@
         if (data.error) throw new Error(data.error);
 
         showToast("Sustitución guardada en el documento compartido", "success");
-        buscarSustitutos(); // Recargar cuadrante
+        buscarSustitutos();
         cargarDatosIniciales();
       } catch (err) {
         showToast(err.message, "error");
@@ -832,7 +876,6 @@
         return;
       }
 
-      // Ordenar por fecha y periodo
       const ordenadas = sustitucionesData.slice().sort((a,b) => (b.fecha + b.periodo_id).localeCompare(a.fecha + a.periodo_id));
 
       let html = "";
@@ -854,15 +897,134 @@
               </div>
             </td>
             <td class="py-3 px-4 text-center">
-              <button onclick="eliminarSustitucion('${s.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 transition" title="Eliminar sustitución">
-                <i class="ph-bold ph-trash text-base"></i>
-              </button>
+              <div class="flex items-center justify-center gap-1.5">
+                <button onclick="copiarFilaIndividual('${s.id}')" class="p-1.5 text-slate-400 hover:text-indigo-600 transition" title="Copiar solo esta fila para Word/Docs">
+                  <i class="ph-bold ph-copy text-base"></i>
+                </button>
+                <button onclick="copiarMensajeWhatsApp('${s.profesor_sustituto_nombre}', '${s.periodo_nombre}', '${s.profesor_ausente_nombre}', '${s.curso_grupo || s.aula}', '${s.materia}', '${tarea}')" class="p-1.5 text-slate-400 hover:text-emerald-600 transition" title="Copiar aviso WhatsApp para el sustituto">
+                  <i class="ph-bold ph-whatsapp-logo text-base"></i>
+                </button>
+                <button onclick="eliminarSustitucion('${s.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 transition" title="Eliminar sustitución">
+                  <i class="ph-bold ph-trash text-base"></i>
+                </button>
+              </div>
             </td>
           </tr>
         `;
       });
 
       tbody.innerHTML = html;
+    }
+
+    async function copiarFilaIndividual(subId) {
+      const s = sustitucionesData.find(x => x.id === subId);
+      if (!s) return;
+      const tarea = s.que_hacer || s.observaciones || "—";
+
+      const html = `
+        <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; font-family: Calibri, sans-serif; font-size: 10pt; width: 100%;">
+          <tr style="background-color: #FFFFFF;">
+            <td style="text-align: center;">${s.fecha}</td>
+            <td style="text-align: center;">${s.periodo_nombre}</td>
+            <td>${s.profesor_ausente_nombre}</td>
+            <td style="text-align: center; font-weight: bold;">${s.curso_grupo || s.aula || '—'}</td>
+            <td>${s.materia || '—'}</td>
+            <td style="font-weight: bold; color: #1E3A8A;">${s.profesor_sustituto_nombre}</td>
+            <td>${tarea}</td>
+          </tr>
+        </table>
+      `;
+
+      try {
+        const blobHtml = new Blob([html], { type: "text/html" });
+        const blobText = new Blob([`${s.fecha}\t${s.periodo_nombre}\t${s.profesor_ausente_nombre}\t${s.curso_grupo || s.aula}\t${s.materia}\t${s.profesor_sustituto_nombre}\t${tarea}`], { type: "text/plain" });
+        await navigator.clipboard.write([
+          new ClipboardItem({ "text/html": blobHtml, "text/plain": blobText })
+        ]);
+        showToast("¡Fila copiada con formato! Pégala (Ctrl+V) en tu Word.", "success");
+      } catch (e) {
+        showToast("Fila copiada", "info");
+      }
+    }
+
+    function copiarMensajeWhatsApp(sustituto, hora, ausente, clase, materia, tarea) {
+      const horaLimpia = hora.split(" (")[0] || hora;
+      const msg = `Hola ${sustituto},\nTe toca sustituir hoy en ${horaLimpia} a ${ausente} en ${clase} (${materia}).\n\n📌 Tarea: ${tarea || 'Continuar con el temario habitual'}\n\n¡Muchas gracias! (Vero · Escuelas Pías Aluche)`;
+      navigator.clipboard.writeText(msg).then(() => {
+        showToast("¡Mensaje de WhatsApp copiado al portapapeles!", "success");
+      });
+    }
+
+    async function copiarTablaHoy() {
+      const hoy = new Date().toISOString().split("T")[0];
+      const deHoy = sustitucionesData.filter(s => s.fecha === hoy);
+      if (deHoy.length === 0) {
+        showToast("No hay sustituciones registradas para el día de hoy.", "warning");
+        return;
+      }
+      copiarSubconjuntoTabla(deHoy, `Sustituciones de Hoy (${hoy})`);
+    }
+
+    async function copiarTablaParaWord() {
+      if (!sustitucionesData || sustitucionesData.length === 0) {
+        showToast("No hay sustituciones registradas para copiar.", "warning");
+        return;
+      }
+      copiarSubconjuntoTabla(sustitucionesData, "Cuadrante Semanal Completo");
+    }
+
+    async function copiarSubconjuntoTabla(lista, titulo) {
+      const ordenadas = lista.slice().sort((a,b) => (a.fecha + a.periodo_id).localeCompare(b.fecha + b.periodo_id));
+
+      let html = `
+        <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; font-family: Calibri, sans-serif; font-size: 10pt; width: 100%;">
+          <thead>
+            <tr style="background-color: #1E3A8A; color: #FFFFFF; font-weight: bold; text-align: center;">
+              <th>Día / Fecha</th>
+              <th>Hora</th>
+              <th>Quién falta</th>
+              <th>Clase</th>
+              <th>Asignatura</th>
+              <th>Quién sustituye</th>
+              <th>Qué deben hacer en su hora</th>
+              <th>Firma / OK</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      ordenadas.forEach((s, idx) => {
+        const bg = idx % 2 === 1 ? "#F8FAFC" : "#FFFFFF";
+        const tarea = s.que_hacer || s.observaciones || "—";
+        html += `
+          <tr style="background-color: ${bg};">
+            <td style="text-align: center;">${s.fecha}</td>
+            <td style="text-align: center;">${s.periodo_nombre}</td>
+            <td>${s.profesor_ausente_nombre}</td>
+            <td style="text-align: center; font-weight: bold;">${s.curso_grupo || s.aula || '—'}</td>
+            <td>${s.materia || '—'}</td>
+            <td style="font-weight: bold; color: #1E3A8A;">${s.profesor_sustituto_nombre}</td>
+            <td>${tarea}</td>
+            <td style="text-align: center; color: #94A3B8;">[   ]</td>
+          </tr>
+        `;
+      });
+
+      html += `
+          </tbody>
+        </table>
+      `;
+
+      try {
+        const blobHtml = new Blob([html], { type: "text/html" });
+        const blobText = new Blob([document.getElementById("tabla-documento-word").innerText], { type: "text/plain" });
+        await navigator.clipboard.write([
+          new ClipboardItem({ "text/html": blobHtml, "text/plain": blobText })
+        ]);
+        showToast(`¡${titulo} copiado con formato! Pégalo (Ctrl+V) en Word o Drive.`, "success");
+      } catch (err) {
+        showToast("Copiado al portapapeles", "info");
+      }
     }
 
     async function eliminarSustitucion(id) {
@@ -913,67 +1075,6 @@
         cargarSustituciones();
       } catch (err) {
         showToast(err.message, "error");
-      }
-    }
-
-    async function copiarTablaParaWord() {
-      if (!sustitucionesData || sustitucionesData.length === 0) {
-        showToast("No hay sustituciones registradas para copiar.", "warning");
-        return;
-      }
-
-      const ordenadas = sustitucionesData.slice().sort((a,b) => (a.fecha + a.periodo_id).localeCompare(b.fecha + b.periodo_id));
-
-      let html = `
-        <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; font-family: Calibri, sans-serif; font-size: 11pt; width: 100%;">
-          <thead>
-            <tr style="background-color: #1E3A8A; color: #FFFFFF; font-weight: bold; text-align: center;">
-              <th>Día / Fecha</th>
-              <th>Hora</th>
-              <th>Quién falta</th>
-              <th>Clase</th>
-              <th>Asignatura</th>
-              <th>Quién sustituye</th>
-              <th>Qué deben hacer en su hora</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-
-      ordenadas.forEach((s, idx) => {
-        const bg = idx % 2 === 1 ? "#F8FAFC" : "#FFFFFF";
-        const tarea = s.que_hacer || s.observaciones || "—";
-        html += `
-          <tr style="background-color: ${bg};">
-            <td style="text-align: center;">${s.fecha}</td>
-            <td style="text-align: center;">${s.periodo_nombre}</td>
-            <td>${s.profesor_ausente_nombre}</td>
-            <td style="text-align: center; font-weight: bold;">${s.curso_grupo || s.aula || '—'}</td>
-            <td>${s.materia || '—'}</td>
-            <td style="font-weight: bold; color: #1E3A8A;">${s.profesor_sustituto_nombre}</td>
-            <td>${tarea}</td>
-          </tr>
-        `;
-      });
-
-      html += `
-          </tbody>
-        </table>
-      `;
-
-      try {
-        const blobHtml = new Blob([html], { type: "text/html" });
-        const blobText = new Blob([document.getElementById("tabla-documento-word").innerText], { type: "text/plain" });
-        await navigator.clipboard.write([
-          new ClipboardItem({
-            "text/html": blobHtml,
-            "text/plain": blobText
-          })
-        ]);
-        showToast("¡Tabla copiada con formato! Pégala (Ctrl+V) en Word o Drive.", "success");
-      } catch (err) {
-        // Fallback básico
-        showToast("Copiando...", "info");
       }
     }
 

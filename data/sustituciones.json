@@ -1,5 +1,25 @@
 [
   {
+    "id": "sub-20261108072420-9892",
+    "fecha": "2026-11-10",
+    "dia_semana": 1,
+    "periodo_id": "1H",
+    "periodo_nombre": "1ª Hora (09:05 - 10:05)",
+    "profesor_ausente_id": "molina_garcia_cristina",
+    "profesor_ausente_nombre": "Cristina Molina García",
+    "profesor_sustituto_id": "mayordomo_bellot_ana_belen",
+    "profesor_sustituto_nombre": "Ana Belén Mayordomo Bellot",
+    "profesor_sustituto_telefono": "",
+    "profesor_sustituto_email": "mayordomo_bellot_ana_belen@escolapiosaluche.com",
+    "aula": "5º EP-C",
+    "curso_grupo": "5º EP-C",
+    "materia": "Matemáticas",
+    "observaciones": "",
+    "que_hacer": "",
+    "estado": "ASIGNADA",
+    "creado_en": "2026-11-08T07:24:20.161508"
+  },
+  {
     "id": "sub-20260917220738-6b26",
     "fecha": "2026-09-16",
     "dia_semana": 2,
