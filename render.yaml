@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: sustituciones-san-buenaventura
+    name: sustituciones-escuelas-pias-aluche
     runtime: python
     plan: free
     region: frankfurt

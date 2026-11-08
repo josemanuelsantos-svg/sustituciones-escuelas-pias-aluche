@@ -16,6 +16,12 @@ app = Flask(__name__, static_folder="static", template_folder="templates")
 app.config["JSON_AS_ASCII"] = False
 
 db = Database()
+if len(db.get_teachers()) == 0:
+    try:
+        from importar_escuelas_pias import importar_datos
+        importar_datos()
+    except Exception as e:
+        print(f"Aviso al inicializar datos de Escuelas Pías: {e}")
 engine = SubstitutionEngine(db)
 
 @app.route("/favicon.ico")
