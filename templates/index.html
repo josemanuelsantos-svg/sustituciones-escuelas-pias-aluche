@@ -1,16 +1,11 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full bg-slate-100/80 scroll-smooth">
+<html lang="es" class="h-full bg-slate-100/90 scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0b1936">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Sustituciones · Colegio San Buenaventura</title>
-  <!-- Favicon oficial Colegio San Buenaventura -->
-  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/favicon.png') }}">
-  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-  <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo_csb.png') }}">
+  <meta name="theme-color" content="#1e3a8a">
+  <title>Sustituciones · Escuelas Pías Aluche (Vero)</title>
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Phosphor Icons -->
@@ -19,666 +14,201 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
     body {
       font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
       background-color: #f1f5f9;
-      background-image: radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.07) 0px, transparent 50%),
-                        radial-gradient(at 100% 0%, rgba(245, 158, 11, 0.06) 0px, transparent 50%),
-                        radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.04) 0px, transparent 50%);
+      background-image: radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.08) 0px, transparent 50%),
+                        radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.06) 0px, transparent 50%);
       -webkit-tap-highlight-color: transparent;
     }
     [x-cloak] { display: none !important; }
-
-    /* Evitar auto-zoom en iOS al tocar selects o inputs en móvil */
-    @media (max-width: 640px) {
-      select, input[type="text"], input[type="date"], textarea {
-        font-size: 16px !important;
-      }
-    }
-
-    /* Custom Scrollbar */
+    
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-    /* Smooth animations */
     @keyframes fadeInSlide {
-      from { opacity: 0; transform: translateY(8px); }
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .animate-fade-in {
       animation: fadeInSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-
-    /* Safe area para barra inferior en iPhone */
-    .pb-safe {
-      padding-bottom: env(safe-area-inset-bottom, 0.5rem);
-    }
-
-    @media print {
-      header, footer, #mobile-bottom-nav, .no-print { display: none !important; }
-      body { background: white !important; }
-      main { max-width: 100% !important; padding: 0 !important; }
-      .print-card { border: none !important; box-shadow: none !important; padding: 0 !important; }
-    }
   </style>
 </head>
-<body class="min-h-full text-slate-800 flex flex-col selection:bg-indigo-600 selection:text-white">
+<body class="min-h-full text-slate-800 flex flex-col selection:bg-blue-600 selection:text-white">
 
-  <!-- Contenedor de Notificaciones Toast (Arriba en móvil, abajo-derecha en escritorio) -->
-  <div id="toast-container" class="fixed top-4 left-4 right-4 sm:top-auto sm:bottom-5 sm:left-auto sm:right-5 z-50 flex flex-col gap-2.5 sm:max-w-sm w-auto sm:w-full pointer-events-none"></div>
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none"></div>
 
-  <!-- Header / Navbar Institucional -->
-  <header class="bg-gradient-to-r from-[#0b1936]/95 via-[#132a56]/95 to-[#1e3a8a]/95 backdrop-blur-md text-white shadow-lg border-b border-amber-400/30 sticky top-0 z-30">
-    <div class="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-2">
+  <!-- Header / Navbar -->
+  <header class="bg-gradient-to-r from-[#0f172a] via-[#1e3a8a] to-[#1d4ed8] text-white shadow-lg sticky top-0 z-30 border-b border-blue-400/20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-3">
       
-      <!-- Identidad de Marca CSB -->
-      <div class="flex items-center space-x-2.5 sm:space-x-3.5 group cursor-pointer min-w-0" onclick="switchTab('asignar')">
-        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white p-1 sm:p-1.5 flex items-center justify-center shadow-md ring-2 ring-amber-400/50 group-hover:scale-105 transition-transform duration-200 flex-shrink-0">
-          <img src="{{ url_for('static', filename='img/logo_csb.png') }}" alt="Colegio San Buenaventura" class="w-full h-full object-contain">
+      <!-- Brand Escuelas Pías Aluche -->
+      <div class="flex items-center gap-3.5 cursor-pointer" onclick="switchTab('asignar')">
+        <div class="w-11 h-11 rounded-2xl bg-white text-blue-900 flex items-center justify-center font-black text-xl shadow-md ring-2 ring-blue-300/40 shrink-0">
+          <i class="ph-bold ph-graduation-cap text-blue-900 text-2xl"></i>
         </div>
-        <div class="min-w-0">
+        <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-sm sm:text-xl font-extrabold tracking-tight text-white truncate">
-              San Buenaventura
+            <h1 class="text-base sm:text-lg font-black tracking-tight text-white leading-tight">
+              Escuelas Pías Aluche
             </h1>
-            <span class="text-[10px] sm:text-[11px] bg-gradient-to-r from-amber-400/25 to-blue-500/20 text-amber-300 font-extrabold px-2 py-0.5 rounded-full border border-amber-400/40 flex items-center gap-1 shadow-2xs shrink-0">
-              <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-              <span>Bea · EP</span>
+            <span class="text-[11px] bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded-full shadow-xs">
+              Vero
             </span>
           </div>
-          <div class="flex items-center gap-2 text-[11px] text-blue-200/90 mt-0.5">
-            <span class="truncate">Sustituciones Primaria</span>
-            <span class="hidden sm:inline text-blue-400/60">•</span>
-            <span id="reloj-escolar" class="hidden sm:inline-flex items-center gap-1 text-[11px] font-medium text-emerald-300 bg-white/10 px-2 py-0.2 rounded-md">
-              <i class="ph-fill ph-clock"></i> Cargando hora...
-            </span>
-          </div>
+          <p class="text-xs text-blue-200 font-medium">Sistema de Sustituciones · Infantil y Primaria</p>
         </div>
       </div>
 
-      <!-- Acciones Rápidas Móvil (Visibles solo en móvil) -->
-      <div class="flex sm:hidden items-center gap-1.5 shrink-0">
-        <a href="/infantil" class="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 flex items-center gap-1 active:scale-95 transition">
-          <i class="ph-bold ph-baby text-emerald-300 text-xs"></i>
-          <span>Infantil</span>
-        </a>
-        <a href="/" class="p-2 rounded-xl bg-amber-400 text-slate-950 font-extrabold text-xs shadow-sm flex items-center justify-center active:scale-95 transition" title="Cambiar etapa">
-          <i class="ph-bold ph-arrows-left-right text-sm"></i>
-        </a>
-      </div>
-
-      <!-- Navegación Principal (Escritorio / Tablet) -->
-      <nav class="hidden sm:flex flex-wrap items-center gap-1.5 bg-slate-950/40 p-1.5 rounded-2xl border border-white/10 backdrop-blur-xs">
-        <button onclick="switchTab('asignar')" id="tab-btn-asignar" class="tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all bg-white text-slate-900 shadow-md flex items-center gap-1.5 cursor-pointer">
+      <!-- Navigation Tabs -->
+      <nav class="flex items-center gap-1.5 bg-slate-950/40 p-1.5 rounded-2xl border border-white/10 backdrop-blur-md">
+        <button onclick="switchTab('asignar')" id="tab-btn-asignar" class="tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all bg-white text-blue-950 shadow-md flex items-center gap-1.5">
           <i class="ph-bold ph-lightning text-amber-500"></i>
-          <span>Asignar Sustitución</span>
+          <span>Asignar</span>
         </button>
-        <button onclick="switchTab('horarios')" id="tab-btn-horarios" class="tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-blue-100 hover:text-white hover:bg-white/10 flex items-center gap-1.5 cursor-pointer">
-          <i class="ph-bold ph-table"></i>
-          <span>Cuadrante y Horarios</span>
+        <button onclick="switchTab('cuadrante')" id="tab-btn-cuadrante" class="tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-blue-100 hover:text-white hover:bg-white/10 flex items-center gap-1.5">
+          <i class="ph-bold ph-file-doc text-emerald-400"></i>
+          <span>Documento Word</span>
         </button>
-        <button onclick="switchTab('historial')" id="tab-btn-historial" class="tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-blue-100 hover:text-white hover:bg-white/10 flex items-center gap-1.5 cursor-pointer">
-          <i class="ph-bold ph-chart-bar"></i>
-          <span>Historial y Balance</span>
+        <button onclick="switchTab('horarios')" id="tab-btn-horarios" class="tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-blue-100 hover:text-white hover:bg-white/10 flex items-center gap-1.5">
+          <i class="ph-bold ph-calendar-blank"></i>
+          <span>Horarios</span>
         </button>
-        <button onclick="switchTab('importar')" id="tab-btn-importar" class="tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-blue-100 hover:text-white hover:bg-white/10 flex items-center gap-1.5 cursor-pointer" title="Configuración e Importación JSON">
-          <i class="ph-bold ph-gear"></i>
-          <span class="hidden md:inline">Datos</span>
+        <button onclick="switchTab('equidad')" id="tab-btn-equidad" class="tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-blue-100 hover:text-white hover:bg-white/10 flex items-center gap-1.5">
+          <i class="ph-bold ph-scales"></i>
+          <span>Equidad</span>
         </button>
-        <a href="https://calendar.google.com/calendar/u/0?cid=c2FuYnVlbmF2ZW50dXJhLm9yZ19hM2wxZWcxcnB1OWA0c2k3aWhwNDhncWpuc0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white flex items-center gap-1.5 shadow-md hover:shadow-lg transition ml-1 border border-emerald-300/30">
-          <i class="ph-bold ph-calendar-check text-sm"></i>
-          <span class="hidden lg:inline">Google Calendar</span>
-          <i class="ph-bold ph-arrow-up-right text-[11px]"></i>
-        </a>
-        <a href="/" class="px-3 py-2 rounded-xl text-xs font-bold bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 hover:text-white transition flex items-center gap-1.5 border border-amber-400/30 ml-0.5" title="Cambiar a Infantil o elegir otro usuario">
-          <i class="ph-bold ph-arrows-left-right text-amber-400"></i>
-          <span class="hidden xl:inline">Cambiar Etapa</span>
-        </a>
       </nav>
     </div>
   </header>
 
   <!-- Main Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 pt-4 pb-24 sm:py-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
     <!-- ========================================== -->
-    <!-- PESTAÑA 1: ASIGNAR SUSTITUCIÓN (PRINCIPAL) -->
+    <!-- PESTAÑA 1: ASIGNAR SUSTITUCIÓN (VERO)      -->
     <!-- ========================================== -->
-    <section id="tab-asignar" class="tab-content block space-y-4 sm:space-y-6 animate-fade-in">
+    <section id="tab-asignar" class="tab-content block space-y-6 animate-fade-in">
       
-      <!-- Banner Personalizado de Bea con Saludo del Líder -->
-      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0b1936] via-[#132a56] to-[#1e3a8a] text-white p-4 sm:p-6 shadow-xl border border-amber-400/40">
-        <div class="absolute -right-8 -bottom-8 w-56 h-56 bg-amber-400/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -left-8 -top-8 w-56 h-56 bg-blue-400/10 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
-          <div class="flex items-center sm:items-start gap-3 sm:gap-4">
-            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-amber-300 via-amber-400 to-amber-600 text-slate-950 font-black text-xl sm:text-2xl flex items-center justify-center shadow-lg ring-4 ring-amber-400/30 shrink-0">
-              B
-            </div>
-            <div class="min-w-0">
-              <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                <span class="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-amber-300 bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-400/30">
-                  Coordinación de Primaria
-                </span>
-                <span class="hidden sm:inline text-xs text-blue-200/80">· Colegio San Buenaventura</span>
-              </div>
-              <h2 class="text-base sm:text-2xl font-extrabold text-white mt-1 leading-snug">
-                "Hola, soy Bea para el acceso a las sustituciones de Primaria"
-              </h2>
-              <div class="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-400/15 border border-amber-400/30 text-[11px] sm:text-sm font-bold text-amber-200 shadow-sm">
-                <span>👑</span>
-                <span>Recuerda que debes sumisión al líder</span>
-              </div>
-            </div>
+      <!-- Banner Criterios Oficiales Escuelas Pías -->
+      <div class="rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white p-5 sm:p-6 shadow-xl border border-blue-400/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-blue-500/30 text-blue-200 border border-blue-400/30 uppercase tracking-wider">
+              Criterios del Centro
+            </span>
+            <span class="text-xs text-slate-300">• Coordinación Vero</span>
           </div>
-
-          <div class="hidden md:flex flex-col gap-2 shrink-0">
-            <a href="/infantil" class="py-2 px-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/20 transition flex items-center justify-center gap-1.5">
-              <i class="ph-bold ph-arrow-square-out text-emerald-300"></i>
-              <span>Ir a Infantil (Elena)</span>
-            </a>
-            <a href="/" class="py-2 px-3.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs shadow-md transition flex items-center justify-center gap-1.5">
-              <i class="ph-bold ph-arrows-left-right"></i>
-              <span>Cambiar Etapa</span>
-            </a>
-          </div>
+          <h2 class="text-lg sm:text-xl font-black text-white">
+            Orden de selección: 1º Guardia ➔ 2º Reuniones ➔ 3º Apoyos
+          </h2>
+          <p class="text-xs sm:text-sm text-blue-200/90 mt-1">
+            • <strong>Solo se cubren horas de clase</strong> (las horas de guardia, reunión o apoyo no se cubren).<br>
+            • Primaria sustituye a Primaria e Infantil a Infantil si es posible. A igualdad, quien menos sustituciones lleve.
+          </p>
         </div>
+
+        <button onclick="switchTab('cuadrante')" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm rounded-2xl shadow-lg transition flex items-center gap-2 shrink-0">
+          <i class="ph-bold ph-table text-base"></i>
+          <span>Ver Documento Compartido</span>
+        </button>
       </div>
 
-      <!-- Tarjetas KPI de Resumen Rápido (2x2 compacto en móvil, 4 en escritorio) -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
-        <div class="bg-white/95 backdrop-blur-xs rounded-2xl border border-slate-200/90 p-3 sm:p-3.5 shadow-xs flex items-center gap-2.5 sm:gap-3.5">
-          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-blue-50 border border-blue-100 text-blue-700 flex items-center justify-center text-lg sm:text-xl flex-shrink-0">
-            <i class="ph-duotone ph-users-three"></i>
-          </div>
-          <div class="min-w-0">
-            <div class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 truncate">Claustro EP</div>
-            <div class="text-xs sm:text-base font-extrabold text-slate-900 truncate"><span id="kpi-total-profesores">25</span> docentes</div>
-          </div>
-        </div>
-
-        <div class="bg-white/95 backdrop-blur-xs rounded-2xl border border-slate-200/90 p-3 sm:p-3.5 shadow-xs flex items-center gap-2.5 sm:gap-3.5">
-          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center text-lg sm:text-xl flex-shrink-0">
-            <i class="ph-duotone ph-sparkle"></i>
-          </div>
-          <div class="min-w-0">
-            <div class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 truncate">Criterio</div>
-            <div class="text-xs font-bold text-slate-800 truncate">Disp. y Equidad</div>
-          </div>
-        </div>
-
-        <div class="bg-white/95 backdrop-blur-xs rounded-2xl border border-slate-200/90 p-3 sm:p-3.5 shadow-xs flex items-center gap-2.5 sm:gap-3.5">
-          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center text-lg sm:text-xl flex-shrink-0">
-            <i class="ph-duotone ph-calendar-check"></i>
-          </div>
-          <div class="min-w-0">
-            <div class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 truncate">En Fecha</div>
-            <div class="text-xs sm:text-base font-extrabold text-emerald-700 truncate"><span id="kpi-sustituciones-fecha">0</span> sustituciones</div>
-          </div>
-        </div>
-
-        <div onclick="switchTab('historial')" class="bg-white/95 backdrop-blur-xs rounded-2xl border border-slate-200/90 p-3 sm:p-3.5 shadow-xs flex items-center justify-between gap-2 cursor-pointer hover:border-indigo-300 transition active:scale-[0.98]">
-          <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center text-lg sm:text-xl flex-shrink-0">
-              <i class="ph-duotone ph-archive"></i>
-            </div>
-            <div class="min-w-0">
-              <div class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 truncate">Total Curso</div>
-              <div class="text-xs sm:text-base font-extrabold text-slate-900 truncate"><span id="kpi-sustituciones-total">0</span> reg.</div>
-            </div>
-          </div>
-          <i class="ph-bold ph-caret-right text-xs text-indigo-600 shrink-0"></i>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- Selector de Ausencia -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- Formulario de Ausencia (Izquierda - 5 cols) -->
-        <div class="lg:col-span-5 bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 shadow-sm relative overflow-hidden">
-          <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-600 via-blue-600 to-amber-400"></div>
-
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
-              <span class="w-7 h-7 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center text-sm font-black">1</span>
-              <span>Datos de la Ausencia</span>
-            </h2>
-            <span id="label-dia-semana" class="text-xs font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200"></span>
+        <!-- Columna Izquierda: Formulario de Selección -->
+        <div class="lg:col-span-5 bg-white rounded-3xl p-6 shadow-md border border-slate-200/80 space-y-5">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+              <i class="ph-bold ph-user-minus text-rose-500"></i>
+              <span>Registrar Ausencia</span>
+            </h3>
+            <span class="text-xs text-slate-400 font-semibold" id="contador-docentes">30 docentes</span>
           </div>
 
-          <form id="form-ausencia" onsubmit="event.preventDefault(); buscarSustitutos();" class="space-y-4">
-            
-            <!-- 1. Calendario Mensual Interactivo -->
-            <div>
-              <div class="bg-slate-50/90 border border-slate-200/90 rounded-2xl p-3.5 space-y-2.5">
-                <!-- Cabecera del mes con controles -->
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center space-x-1">
-                    <button type="button" onclick="cambiarMes(-1)" title="Mes anterior" class="w-7 h-7 flex items-center justify-center rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 transition shadow-2xs">
-                      <i class="ph-bold ph-caret-left"></i>
-                    </button>
-                    <span id="cal-mes-ano" class="text-xs font-extrabold text-slate-800 capitalize tracking-tight px-2 min-w-[110px] text-center"></span>
-                    <button type="button" onclick="cambiarMes(1)" title="Mes siguiente" class="w-7 h-7 flex items-center justify-center rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 transition shadow-2xs">
-                      <i class="ph-bold ph-caret-right"></i>
-                    </button>
-                  </div>
-
-                  <!-- Botones rápidos Hoy / Mañana -->
-                  <div class="flex items-center gap-1">
-                    <button type="button" onclick="setFechaRelativa(0)" class="px-2.5 py-1 text-[10px] font-bold rounded-lg bg-white hover:bg-indigo-600 hover:text-white text-slate-700 border border-slate-200 shadow-2xs transition">Hoy</button>
-                    <button type="button" onclick="setFechaRelativa(1)" class="px-2.5 py-1 text-[10px] font-bold rounded-lg bg-white hover:bg-indigo-600 hover:text-white text-slate-700 border border-slate-200 shadow-2xs transition">Mañana</button>
-                  </div>
-                </div>
-
-                <!-- Cabecera de días (L M X J V S D) -->
-                <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-extrabold text-slate-400 select-none pt-1">
-                  <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span class="text-rose-300">S</span><span class="text-rose-300">D</span>
-                </div>
-
-                <!-- Días del mes (clickables) -->
-                <div id="cal-dias-grid" class="grid grid-cols-7 gap-1 text-center text-xs">
-                  <!-- Inyectado por app.js -->
-                </div>
-
-                <!-- Resumen de fecha seleccionada -->
-                <div class="pt-2 border-t border-slate-200/80 flex items-center justify-between text-[11px]">
-                  <span class="text-slate-500 font-medium flex items-center gap-1"><i class="ph-fill ph-calendar-blank text-indigo-500"></i> Fecha activa:</span>
-                  <span id="cal-fecha-seleccionada" class="font-extrabold text-indigo-900"></span>
-                </div>
-              </div>
-
-              <!-- Input date oculto pero sincronizado para el formulario -->
-              <input type="hidden" id="input-fecha" required>
+          <!-- 1. Fecha -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Fecha de la ausencia</label>
+            <div class="flex gap-2">
+              <input type="date" id="input-fecha" class="flex-1 px-3.5 py-2.5 rounded-2xl border border-slate-300 font-semibold text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
+              <button type="button" onclick="setHoy()" class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-2xl transition">Hoy</button>
+              <button type="button" onclick="setManana()" class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-2xl transition">Mañana</button>
             </div>
+          </div>
 
-            <!-- 2. Selector Visual de Tramos Horarios (Multi-selección + Día Completo) -->
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">2. Horas / Tramos a Sustituir</label>
-                <span id="badge-horas-seleccionadas" class="text-[10px] font-extrabold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">Ninguna seleccionada</span>
-              </div>
-
-              <!-- Botones rápidos de selección múltiple (2x2 en móvil, 4 en escritorio) -->
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2.5">
-                <button type="button" onclick="seleccionarPresetTramos('DIA_COMPLETO')" class="py-2 px-2.5 rounded-xl text-[11px] font-extrabold bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 text-amber-900 border border-amber-300/80 shadow-2xs transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
-                  <i class="ph-fill ph-sun text-amber-500 text-sm"></i>
-                  <span>Día Completo</span>
-                </button>
-                <button type="button" onclick="seleccionarPresetTramos('MANANA')" class="py-2 px-2.5 rounded-xl text-[11px] font-bold bg-slate-50 hover:bg-indigo-50 text-slate-700 hover:text-indigo-800 border border-slate-200 hover:border-indigo-200 transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
-                  <i class="ph-bold ph-sun-horizon text-indigo-500 text-sm"></i>
-                  <span>Mañana (1H-4H)</span>
-                </button>
-                <button type="button" onclick="seleccionarPresetTramos('TARDE')" class="py-2 px-2.5 rounded-xl text-[11px] font-bold bg-slate-50 hover:bg-indigo-50 text-slate-700 hover:text-indigo-800 border border-slate-200 hover:border-indigo-200 transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
-                  <i class="ph-bold ph-moon-stars text-indigo-500 text-sm"></i>
-                  <span>Tarde (5H-6H)</span>
-                </button>
-                <button type="button" onclick="seleccionarPresetTramos('LIMPIAR')" class="py-2 px-2.5 rounded-xl text-[11px] font-semibold bg-white hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 hover:border-rose-200 transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
-                  <i class="ph-bold ph-x text-sm"></i>
-                  <span>Limpiar</span>
-                </button>
-              </div>
-              
-              <!-- Botonera multi-selección de tramos 1H a 6H -->
-              <div id="pills-tramos" class="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-2">
-                <!-- Generado dinámicamente por app.js -->
-              </div>
-              <p class="text-[10px] text-slate-400 font-medium">💡 Pulsa una o varias horas (o «Día Completo») para cubrir varias sesiones a la vez.</p>
-
-              <!-- Select oculto sincronizado por compatibilidad -->
-              <select id="select-tramo" class="hidden">
-                <option value="">Selecciona hora / tramo...</option>
-              </select>
-            </div>
-
-            <!-- 3. Profesor Ausente -->
-            <div>
-              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">3. Profesor que se ausenta</label>
-              <div class="relative">
-                <select id="select-profesor-ausente" required class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:outline-none transition appearance-none">
-                  <option value="">Selecciona profesor ausente...</option>
-                </select>
-                <i class="ph-bold ph-user-Switch absolute left-3 top-3 text-slate-400 text-base pointer-events-none"></i>
-                <i class="ph-bold ph-caret-down absolute right-3.5 top-3 text-slate-400 text-xs pointer-events-none"></i>
-              </div>
-
-              <!-- Indicador inteligente de clase(s) detectada(s) -->
-              <div id="badge-clase-detectada" class="hidden mt-2 p-2.5 rounded-xl border text-xs transition-all"></div>
-            </div>
-
-            <!-- 4. Aula, Grupo y Materia (Autocompletados cuando es 1 tramo; automático por hora en multi-tramo) -->
-            <div id="box-datos-sesion-unica" class="p-3.5 bg-slate-50/80 rounded-2xl border border-slate-200/80 space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Datos de la sesión (Autocompletado)</span>
-                <span class="text-[10px] text-indigo-600 font-semibold flex items-center gap-0.5"><i class="ph-fill ph-magic-wand"></i> Automático</span>
-              </div>
-              <div class="grid grid-cols-2 gap-2.5">
-                <div>
-                  <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Aula</label>
-                  <input type="text" id="input-aula" placeholder="Ej. 5ºEP-A" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Curso / Grupo</label>
-                  <input type="text" id="input-grupo" placeholder="Ej. 5º EP-A" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
-                </div>
-              </div>
-              <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Materia / Asignatura</label>
-                <input type="text" id="input-materia" placeholder="Ej. Matemáticas, Lengua, Música..." class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
+          <!-- 2. Filtro de Etapa y Profesor Ausente -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Profesor Ausente</label>
+              <!-- Selector de etapa rápida -->
+              <div class="flex rounded-xl bg-slate-100 p-0.5 text-[11px] font-bold">
+                <button type="button" onclick="filtrarEtapaProf('Todos')" id="btn-etapa-todos" class="px-2 py-0.5 rounded-lg bg-white text-blue-900 shadow-xs">Todos</button>
+                <button type="button" onclick="filtrarEtapaProf('Primaria')" id="btn-etapa-pri" class="px-2 py-0.5 rounded-lg text-slate-600 hover:text-slate-900">Primaria</button>
+                <button type="button" onclick="filtrarEtapaProf('Infantil')" id="btn-etapa-inf" class="px-2 py-0.5 rounded-lg text-slate-600 hover:text-slate-900">Infantil</button>
               </div>
             </div>
+            <select id="select-profesor-ausente" onchange="onProfesorAusenteChange()" class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 font-semibold text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none bg-white">
+              <option value="">-- Selecciona profesor ausente --</option>
+            </select>
+          </div>
 
-            <!-- 5. Tareas / Indicaciones -->
-            <div>
-              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Indicaciones o tarea para el aula <span class="text-slate-400 font-normal lowercase">(opcional)</span></label>
-              <textarea id="input-observaciones" rows="2" placeholder="Ej. Hacer ejercicios pág. 32, vigilar lectura comprensiva..." class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:outline-none transition"></textarea>
+          <!-- 3. Selección de Modo: Día Completo vs Hora Concreta -->
+          <div class="pt-2">
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Alcance de la sustitución</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" onclick="setModoAusencia('dia_completo')" id="btn-modo-dia" class="p-3 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-blue-900 font-extrabold text-xs flex items-center justify-center gap-1.5 transition">
+                <i class="ph-bold ph-sun text-base"></i>
+                <span>Día Completo (Todas)</span>
+              </button>
+              <button type="button" onclick="setModoAusencia('hora_individual')" id="btn-modo-hora" class="p-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 transition">
+                <i class="ph-bold ph-clock text-base"></i>
+                <span>Hora Concreta</span>
+              </button>
             </div>
+          </div>
 
-            <button type="submit" id="btn-buscar" class="w-full py-3.5 px-5 bg-gradient-to-r from-[#132a56] via-indigo-700 to-blue-700 hover:from-indigo-800 hover:to-blue-800 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 text-sm cursor-pointer active:scale-[0.99]">
-              <i class="ph-fill ph-sparkle text-amber-300 text-lg"></i>
-              <span id="btn-buscar-texto">Buscar Sustituto Idóneo</span>
-            </button>
-          </form>
+          <!-- Selector de hora concreta (si aplica) -->
+          <div id="wrapper-hora-concreta" class="hidden">
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Tramo Horario</label>
+            <select id="select-periodo" onchange="onPeriodoChange()" class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 font-semibold text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none bg-white">
+              <option value="1H">1ª Hora (09:05 - 10:05)</option>
+              <option value="2H">2ª Hora (10:05 - 11:05)</option>
+              <option value="3H">3ª Hora (11:35 - 12:35)</option>
+              <option value="4H">4ª Hora (14:30 - 15:30)</option>
+              <option value="5H">5ª Hora (15:30 - 16:30)</option>
+            </select>
+          </div>
+
+          <!-- Botón de Búsqueda -->
+          <button type="button" onclick="buscarSustitutos()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-blue-500/30 transition flex items-center justify-center gap-2">
+            <i class="ph-bold ph-magnifying-glass text-lg"></i>
+            <span>Buscar Sustitutos Idóneos</span>
+          </button>
         </div>
 
-        <!-- Resultados, Recomendación y Confirmación (Derecha - 7 cols) -->
-        <div class="lg:col-span-7 space-y-5">
+        <!-- Columna Derecha: Panel de Horario del Ausente y Candidatos -->
+        <div class="lg:col-span-7 space-y-4">
           
-          <!-- Estado Inicial (Vacío + Asignación Inteligente) -->
-          <div id="panel-inicial" class="bg-white rounded-3xl border border-slate-200/90 p-8 sm:p-10 text-center shadow-sm flex flex-col items-center justify-center">
-            <div class="w-20 h-20 rounded-3xl bg-gradient-to-tr from-indigo-50 to-amber-50 border border-indigo-100 text-indigo-600 flex items-center justify-center text-4xl mb-4 shadow-inner">
-              <i class="ph-duotone ph-user-check"></i>
+          <!-- Estado Inicial / Vacío -->
+          <div id="panel-vacio" class="bg-white rounded-3xl p-10 text-center border border-slate-200 shadow-sm flex flex-col items-center justify-center min-h-[380px]">
+            <div class="w-16 h-16 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-3xl mb-3">
+              <i class="ph-bold ph-calendar-check"></i>
             </div>
-            <h3 class="text-lg font-extrabold text-slate-900">Motor de Sustituciones Preparado</h3>
-            <p class="text-xs sm:text-sm text-slate-500 max-w-md mt-1.5 leading-relaxed">
-              Selecciona la <strong>fecha</strong>, <strong>una o varias horas</strong> (o <strong>Día Completo</strong>) y el <strong>profesor ausente</strong>. El sistema detectará sus clases en cada tramo y te propondrá los sustitutos idóneos.
+            <h4 class="text-base font-bold text-slate-800">Selecciona el docente ausente</h4>
+            <p class="text-xs text-slate-500 max-w-sm mt-1">
+              El motor evaluará automáticamente su horario del día, detectará qué horas son de clase y ordenará a los sustitutos libres por 1º Guardia, 2º Reunión y 3º Apoyo.
             </p>
-
-            <div class="mt-7 w-full max-w-lg bg-slate-50/90 border border-slate-200/80 rounded-2xl p-4 text-left">
-              <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 mb-2 flex items-center gap-1.5">
-                <i class="ph-fill ph-check-circle text-emerald-600 text-sm"></i> Asignación Inteligente de Sustituciones
-              </div>
-              <p class="text-xs text-slate-600 leading-relaxed">
-                El sistema evalúa en cada hora las ausencias, las clases lectivas y los huecos libres para proponer de forma automática al docente más adecuado según la disponibilidad y equidad del centro.
-              </p>
-            </div>
           </div>
 
-          <!-- Spinner Cargando -->
-          <div id="panel-cargando" class="hidden bg-white rounded-3xl border border-slate-200 p-12 text-center shadow-sm">
-            <div class="inline-block animate-spin rounded-full h-11 w-11 border-4 border-indigo-600 border-t-transparent mb-3"></div>
-            <p class="text-sm font-bold text-slate-800">Evaluando cuadrante y disponibilidad por cada hora...</p>
-            <p class="text-xs text-slate-400 mt-1">Comprobando clases lectivas y disponibilidad horaria</p>
-          </div>
-
-          <!-- Panel de Resultados (1 Tramo) -->
-          <div id="panel-resultados" class="hidden space-y-4 animate-fade-in">
-            
-            <!-- TARJETA DESTACADA: RECOMENDADO -->
-            <div id="card-recomendado" class="bg-gradient-to-br from-[#0c1d3d] via-[#172e5c] to-indigo-950 text-white rounded-3xl p-6 shadow-xl border border-indigo-500/30 relative overflow-hidden">
-              <div class="absolute -right-8 -top-8 w-40 h-40 bg-amber-400/10 rounded-full blur-2xl pointer-events-none"></div>
-              <div class="absolute -left-8 -bottom-8 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
-              
-              <div class="flex flex-wrap items-center justify-between gap-2 mb-4 relative z-10">
-                <div class="flex items-center gap-2">
-                  <span class="bg-gradient-to-r from-amber-300 to-amber-400 text-slate-950 text-xs font-extrabold uppercase px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
-                    <i class="ph-fill ph-crown"></i> Opción Óptima Recomendada
-                  </span>
-                  <span id="rec-puntuacion" class="text-[11px] bg-white/10 text-blue-200 px-2.5 py-1 rounded-full font-mono border border-white/10"></span>
-                </div>
-                <span id="rec-disponibilidad" class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30"></span>
-              </div>
-
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2 relative z-10">
-                <div class="flex items-center gap-3.5">
-                  <div id="rec-avatar" class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 font-black text-lg flex items-center justify-center shadow-lg ring-2 ring-white/20 shrink-0">
-                    IP
-                  </div>
-                  <div>
-                    <h3 id="rec-nombre" class="text-xl sm:text-2xl font-extrabold tracking-tight text-white"></h3>
-                    <div class="flex flex-wrap items-center gap-3 text-xs text-blue-200/90 mt-1">
-                      <span id="rec-depto" class="flex items-center gap-1"><i class="ph-bold ph-books text-amber-300"></i> <span class="val"></span></span>
-                      <span id="rec-etapa" class="flex items-center gap-1"><i class="ph-bold ph-graduation-cap text-amber-300"></i> <span class="val"></span></span>
-                      <span id="rec-telefono" class="flex items-center gap-1"><i class="ph-bold ph-envelope-simple text-amber-300"></i> <span class="val"></span></span>
-                    </div>
-                  </div>
-                </div>
-
-                <button onclick="asignarRecomendado()" class="py-3 px-6 bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-300 hover:to-emerald-400 text-slate-950 font-extrabold rounded-2xl shadow-lg hover:shadow-emerald-500/25 transition-all flex items-center justify-center gap-2 flex-shrink-0 cursor-pointer active:scale-95 text-sm">
-                  <i class="ph-bold ph-check-circle text-lg"></i>
-                  <span>Asignar Sustitución</span>
-                </button>
-              </div>
-
-              <!-- Motivo detallado -->
-              <div class="mt-4 pt-3.5 border-t border-white/10 flex items-center gap-2 text-xs text-blue-100 relative z-10">
-                <i class="ph-fill ph-sparkle text-amber-300 shrink-0"></i>
-                <span class="font-semibold text-blue-300 shrink-0">Criterio aplicado:</span>
-                <span id="rec-motivo" class="text-white font-semibold truncate"></span>
-              </div>
-            </div>
-
-            <!-- OTRAS ALTERNATIVAS DISPONIBLES -->
-            <div class="bg-white rounded-3xl border border-slate-200/90 p-5 shadow-sm">
-              <div class="flex items-center justify-between mb-3.5">
-                <h3 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                  <i class="ph-bold ph-users text-indigo-600 text-sm"></i>
-                  <span>Otros Docentes Disponibles en este Tramo (<span id="count-alternativas">0</span>)</span>
-                </h3>
-                <span class="text-[11px] text-slate-400 font-medium">Docentes con hueco libre en este tramo</span>
-              </div>
-              
-              <div id="lista-alternativas" class="space-y-2.5">
-                <!-- Se llena dinámicamente -->
-              </div>
-            </div>
-
-            <!-- PROFESORES NO DISPONIBLES EN ESTA HORA -->
-            <details class="bg-white rounded-2xl border border-slate-200/80 p-3.5 text-xs group">
-              <summary class="font-bold text-slate-600 cursor-pointer flex items-center justify-between hover:text-slate-900 list-none">
-                <span class="flex items-center gap-2">
-                  <span class="w-6 h-6 rounded-lg bg-rose-50 text-rose-500 flex items-center justify-center"><i class="ph-bold ph-prohibit"></i></span>
-                  <span>Docentes con clase o no disponibles en este tramo (<span id="count-nodisponibles">0</span>)</span>
-                </span>
-                <span class="text-indigo-600 text-[11px] font-semibold flex items-center gap-1 group-open:rotate-180 transition-transform">
-                  <i class="ph-bold ph-caret-down"></i>
-                </span>
-              </summary>
-              <div id="lista-nodisponibles" class="mt-3 pt-2 border-t border-slate-100 divide-y divide-slate-100 space-y-1 text-slate-600 max-h-52 overflow-y-auto pr-1">
-                <!-- Se llena dinámicamente -->
-              </div>
-            </details>
-
-          </div>
-
-          <!-- PANEL DE RESULTADOS MÚLTIPLES (VARIAS HORAS O DÍA COMPLETO) -->
-          <div id="panel-resultados-multiple" class="hidden space-y-4 animate-fade-in">
-            <!-- Cabecera resumen multi-hora con botón de confirmación global -->
-            <div class="bg-gradient-to-br from-[#0c1d3d] via-[#172e5c] to-indigo-950 text-white rounded-3xl p-5 sm:p-6 shadow-xl border border-indigo-500/30">
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <div class="flex items-center gap-2">
-                    <span class="bg-amber-400 text-slate-950 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                      <i class="ph-fill ph-stack"></i> Planificación Multi-Hora
-                    </span>
-                    <span id="multi-resumen-fecha" class="text-xs text-blue-200 font-semibold"></span>
-                  </div>
-                  <h3 class="text-lg sm:text-xl font-extrabold text-white mt-1.5">
-                    Propuesta de Sustitutos por Hora para <span id="multi-nombre-ausente" class="text-amber-300 underline decoration-amber-400/40"></span>
-                  </h3>
-                  <p class="text-xs text-blue-200/90 mt-1">
-                    Revisa o cambia el sustituto propuesto en cada tramo y confirma todas las horas seleccionadas a la vez.
-                  </p>
-                </div>
-
-                <button type="button" onclick="confirmarSustitucionesMultiples()" id="btn-confirmar-todas-top" class="py-3 px-5 bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-300 hover:to-emerald-400 text-slate-950 font-extrabold rounded-2xl shadow-lg hover:shadow-emerald-500/25 transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer active:scale-95 text-xs sm:text-sm">
-                  <i class="ph-bold ph-checks text-lg"></i>
-                  <span id="lbl-btn-confirmar-todas">Confirmar Horas Seleccionadas</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Lista de tarjetas por cada hora seleccionada -->
-            <div id="lista-tramos-multiple" class="space-y-3.5">
-              <!-- Inyectado dinámicamente por app.js -->
-            </div>
-
-            <!-- Botón inferior para confirmar todas las horas -->
-            <div class="bg-white rounded-2xl border border-slate-200/90 p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
-              <div class="text-xs text-slate-600 font-medium flex items-center gap-2">
-                <i class="ph-fill ph-info text-indigo-600 text-base"></i>
-                <span>Tras confirmar, podrás enviar el <strong>correo individual</strong> y marcar en <strong>Google Calendar</strong> a cada sustituto.</span>
-              </div>
-              <button type="button" onclick="confirmarSustitucionesMultiples()" class="w-full sm:w-auto py-3 px-6 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold rounded-2xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer text-xs sm:text-sm">
-                <i class="ph-bold ph-checks text-lg"></i>
-                <span>Confirmar y Generar Avisos Individuales</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- PANEL DE ÉXITO TRAS ASIGNAR (1 HORA O MÚLTIPLES HORAS CON ACCIONES INDIVIDUALES) -->
-          <div id="panel-confirmacion" class="hidden bg-white rounded-3xl border-2 border-emerald-500 p-6 shadow-xl space-y-5 animate-fade-in">
-            <div class="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 pb-4">
-              <div class="flex items-center space-x-3.5">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl flex-shrink-0 shadow-inner">
-                  <i class="ph-fill ph-check-circle"></i>
-                </div>
-                <div>
-                  <span id="conf-badge-superior" class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">Registrada Correctamente</span>
-                  <h3 id="conf-titulo" class="text-lg font-extrabold text-slate-900 mt-0.5">¡Sustitución Asignada!</h3>
-                  <p class="text-xs font-medium text-slate-600 mt-0.5" id="conf-resumen"></p>
-                </div>
-              </div>
-              <button onclick="nuevaSustitucion()" class="text-xs font-bold text-indigo-700 hover:text-white bg-indigo-50 hover:bg-indigo-600 px-3.5 py-2 rounded-xl border border-indigo-200 transition flex items-center gap-1.5 cursor-pointer">
-                <i class="ph-bold ph-plus"></i> Nueva sustitución
-              </button>
-            </div>
-
-            <!-- CONTENEDOR MODO 1 HORA -->
-            <div id="conf-modo-unico" class="space-y-4">
-              <div>
-                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2.5">Notificar y sincronizar con 1 clic:</div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  
-                  <!-- Botón Google Calendar (Añadir Evento + Invitar por Email) -->
-                  <a id="btn-calendar" href="#" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-4 rounded-2xl border-2 border-blue-200 bg-gradient-to-r from-blue-50/90 to-indigo-50/60 hover:from-blue-100 hover:to-indigo-100 hover:border-blue-400 transition group shadow-xs">
-                    <div class="flex items-center space-x-3">
-                      <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xl shadow-md flex-shrink-0 group-hover:scale-105 transition">
-                        <i class="ph-bold ph-calendar-plus"></i>
-                      </div>
-                      <div class="text-left">
-                        <div class="text-xs font-extrabold text-slate-900 group-hover:text-blue-950">1. Añadir a Google Calendar</div>
-                        <div class="text-[11px] text-emerald-700 font-bold flex items-center gap-1">
-                          <i class="ph-fill ph-paper-plane-tilt"></i> Invita y envía aviso por email
-                        </div>
-                      </div>
-                    </div>
-                    <i class="ph-bold ph-arrow-square-out text-blue-600 text-lg group-hover:translate-x-0.5 transition-transform"></i>
-                  </a>
-
-                  <!-- Botón Email Institucional Directo -->
-                  <a id="btn-email" href="#" class="flex items-center justify-between p-4 rounded-2xl border-2 border-violet-200 bg-violet-50/60 hover:bg-violet-100 hover:border-violet-400 transition group shadow-xs">
-                    <div class="flex items-center space-x-3">
-                      <div class="w-10 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center text-xl shadow-md flex-shrink-0 group-hover:scale-105 transition">
-                        <i class="ph-bold ph-envelope-simple"></i>
-                      </div>
-                      <div class="text-left">
-                        <div class="text-xs font-extrabold text-slate-900 group-hover:text-violet-950">2. Enviar Correo Individual</div>
-                        <div id="btn-email-sub" class="text-[10px] text-violet-700 font-bold truncate max-w-[170px]">@sanbuenaventura.org</div>
-                      </div>
-                    </div>
-                    <i class="ph-bold ph-arrow-square-out text-violet-600 text-lg group-hover:translate-x-0.5 transition-transform"></i>
-                  </a>
-
-                  <!-- Botón WhatsApp -->
-                  <a id="btn-whatsapp" href="#" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3.5 rounded-2xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100 hover:border-emerald-300 transition group shadow-xs">
-                    <div class="flex items-center space-x-3">
-                      <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-lg shadow-sm flex-shrink-0">
-                        <i class="ph-bold ph-whatsapp-logo"></i>
-                      </div>
-                      <div class="text-left">
-                        <div class="text-xs font-bold text-slate-900 group-hover:text-emerald-950">Enviar por WhatsApp</div>
-                        <div class="text-[10px] text-slate-500">Mensaje directo pre-rellenado</div>
-                      </div>
-                    </div>
-                    <i class="ph-bold ph-arrow-square-out text-emerald-600 text-base group-hover:translate-x-0.5 transition-transform"></i>
-                  </a>
-
-                  <!-- Botón Ver Calendario Oficial Completo -->
-                  <a id="btn-calendar-view" href="https://calendar.google.com/calendar/u/0?cid=c2FuYnVlbmF2ZW50dXJhLm9yZ19hM2wxZWcxcnB1OWA0c2k3aWhwNDhncWpuc0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition group shadow-xs">
-                    <div class="flex items-center space-x-3">
-                      <div class="w-9 h-9 rounded-xl bg-slate-700 text-white flex items-center justify-center text-lg shadow-sm flex-shrink-0">
-                        <i class="ph-bold ph-calendar"></i>
-                      </div>
-                      <div class="text-left">
-                        <div class="text-xs font-bold text-slate-900">Ver Calendario del Centro</div>
-                        <div class="text-[10px] text-slate-500">Vista mensual San Buenaventura</div>
-                      </div>
-                    </div>
-                    <i class="ph-bold ph-arrow-square-out text-slate-600 text-base group-hover:translate-x-0.5 transition-transform"></i>
-                  </a>
-
-                </div>
-              </div>
-
-              <!-- Vista previa del mensaje de WhatsApp -->
-              <div class="bg-slate-50 rounded-2xl p-3.5 border border-slate-200/90">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                    <i class="ph-fill ph-chat-circle-text text-emerald-600 text-sm"></i> Texto listo para enviar o copiar
-                  </span>
-                  <div class="flex items-center gap-2">
-                    <a id="btn-ics" href="#" download class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 hover:underline flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-indigo-50 transition">
-                      <i class="ph-bold ph-download-simple"></i> .ics
-                    </a>
-                    <button onclick="copiarMensajeWA()" class="text-xs font-bold text-slate-700 hover:text-slate-950 bg-white hover:bg-amber-50 border border-slate-300 px-3 py-1 rounded-lg shadow-2xs flex items-center gap-1.5 transition cursor-pointer">
-                      <i class="ph-bold ph-copy"></i> Copiar texto
-                    </button>
-                  </div>
-                </div>
-                <pre id="pre-whatsapp" class="text-xs text-slate-700 whitespace-pre-wrap font-sans bg-white p-3 rounded-xl border border-slate-200/80 max-h-36 overflow-y-auto leading-relaxed"></pre>
-              </div>
-            </div>
-
-            <!-- CONTENEDOR MODO MÚLTIPLES HORAS (ACCIONES INDIVIDUALES POR CADA SUSTITUTO Y HORA) -->
-            <div id="conf-modo-multiple" class="hidden space-y-4">
-              <div class="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-200/80 text-xs text-indigo-950 flex flex-wrap items-center justify-between gap-3">
-                <div class="flex items-center gap-2.5">
-                  <i class="ph-fill ph-paper-plane-tilt text-indigo-600 text-lg shrink-0"></i>
-                  <span>Pulsa en <strong>«Calendar + Invitar»</strong> y <strong>«Enviar Correo»</strong> en cada hora para notificar a cada sustituto, o copia el resumen completo:</span>
-                </div>
-                <button type="button" onclick="copiarParteDelDia()" class="py-2 px-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer shrink-0">
-                  <i class="ph-bold ph-whatsapp-logo text-base"></i>
-                  <span>Copiar Parte del Día para WhatsApp</span>
-                </button>
-              </div>
-
-              <div id="lista-confirmacion-multiple" class="space-y-3">
-                <!-- Tarjetas individuales por hora generadas por app.js -->
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Mini-panel: Sustituciones ya registradas en la fecha seleccionada -->
-          <div id="panel-sustituciones-dia" class="hidden bg-white rounded-3xl border border-slate-200/90 p-5 shadow-xs">
-            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-              <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-600 flex items-center gap-2">
-                <i class="ph-fill ph-calendar-check text-emerald-600 text-base"></i>
-                <span>Sustituciones ya asignadas este día (<span id="count-sust-dia">0</span>)</span>
-              </h3>
-              <div class="flex items-center gap-2.5">
-                <button type="button" onclick="copiarParteDelDia()" class="py-1.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[11px] shadow-xs transition flex items-center gap-1.5 cursor-pointer" title="Copiar resumen formateado de todas las sustituciones del día para WhatsApp">
-                  <i class="ph-bold ph-whatsapp-logo text-sm"></i>
-                  <span>Copiar Parte del Día</span>
-                </button>
-                <button onclick="switchTab('historial')" class="text-[11px] font-bold text-indigo-600 hover:underline cursor-pointer">Ver todas</button>
-              </div>
-            </div>
-            <div id="lista-sustituciones-dia" class="space-y-2"></div>
-          </div>
+          <!-- Panel de Resultados de Búsqueda -->
+          <div id="panel-resultados" class="hidden space-y-4"></div>
 
         </div>
 
@@ -687,227 +217,887 @@
     </section>
 
     <!-- ========================================== -->
-    <!-- PESTAÑA 2: CUADRANTE Y HORARIOS            -->
+    <!-- PESTAÑA 2: DOCUMENTO COMPARTIDO (WORD)     -->
+    <!-- ========================================== -->
+    <section id="tab-cuadrante" class="tab-content hidden space-y-6 animate-fade-in">
+      
+      <!-- Barra Superior de Controles del Documento Word -->
+      <div class="bg-white rounded-3xl p-5 shadow-md border border-slate-200/80 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-lg font-black text-slate-900">Documento Compartido de Sustituciones</h2>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-blue-100 text-blue-800 border border-blue-200">
+              Vista Semanal Oficial
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Las 6 columnas exactas del centro: Quién falta, Hora, Clase, Asignatura, Quién sustituye y Qué deben hacer en su hora.
+          </p>
+        </div>
+
+        <!-- Botones de Acción para Word / Drive -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button onclick="copiarTablaParaWord()" class="px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-extrabold text-xs sm:text-sm rounded-2xl border border-indigo-200 transition flex items-center gap-2 shadow-xs" title="Copia la tabla con formato enriquecido para pegar directamente en Word o Google Docs">
+            <i class="ph-bold ph-copy text-base"></i>
+            <span>Copiar para Word / Drive</span>
+          </button>
+          
+          <a id="btn-descargar-docx" href="/api/export-docx" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs sm:text-sm rounded-2xl shadow-md transition flex items-center gap-2">
+            <i class="ph-bold ph-download-simple text-base"></i>
+            <span>Descargar Word (.docx)</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Tabla del Documento Compartido -->
+      <div class="bg-white rounded-3xl shadow-md border border-slate-200/80 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse" id="tabla-documento-word">
+            <thead>
+              <tr class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white text-xs font-extrabold uppercase tracking-wider">
+                <th class="py-3.5 px-4">Día / Fecha</th>
+                <th class="py-3.5 px-4">Hora</th>
+                <th class="py-3.5 px-4">Quién falta</th>
+                <th class="py-3.5 px-4 text-center">Clase</th>
+                <th class="py-3.5 px-4">Asignatura</th>
+                <th class="py-3.5 px-4">Quién sustituye</th>
+                <th class="py-3.5 px-4">Qué deben hacer en su hora</th>
+                <th class="py-3.5 px-4 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-sustituciones" class="divide-y divide-slate-100 text-xs sm:text-sm font-medium text-slate-700">
+              <tr>
+                <td colspan="8" class="text-center py-12 text-slate-400 font-semibold">
+                  Cargando sustituciones del centro...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- PESTAÑA 3: HORARIOS DEL CENTRO             -->
     <!-- ========================================== -->
     <section id="tab-horarios" class="tab-content hidden space-y-6 animate-fade-in">
-      <div class="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-sm print-card">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-5">
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-lg font-bold">
-                <i class="ph-bold ph-table"></i>
-              </span>
-              <h2 class="text-lg font-extrabold text-slate-900">
-                Cuadrante Oficial de Disponibilidad y Horarios (Octubre - Mayo)
-              </h2>
-            </div>
-            <p class="text-xs text-slate-500 mt-1">
-              Consulta en cada hora quién está disponible para sustituir o filtra el horario lectivo de cualquier docente.
-            </p>
-          </div>
-
-          <div class="flex flex-wrap items-center gap-2.5 no-print">
-            <label class="inline-flex items-center gap-2 text-xs font-bold text-indigo-900 bg-indigo-50/90 border border-indigo-200 px-3.5 py-2 rounded-xl cursor-pointer hover:bg-indigo-100 transition select-none">
-              <input type="checkbox" id="check-solo-guardias" checked onchange="renderHorarioProfesor(document.getElementById('select-filtro-profesor').value)" class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4">
-              <span>Ver Docentes Disponibles</span>
-            </label>
-
-            <div class="flex items-center gap-2">
-              <select id="select-filtro-profesor" onchange="renderHorarioProfesor(this.value)" class="text-xs font-bold bg-slate-50 border border-slate-300 text-slate-800 rounded-xl px-3.5 py-2 focus:ring-2 focus:ring-indigo-500">
-                <option value="todos">-- Vista Global del Claustro --</option>
-              </select>
-            </div>
-
-            <button onclick="window.print()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 transition cursor-pointer" title="Imprimir cuadrante">
-              <i class="ph-bold ph-printer"></i> Imprimir
-            </button>
-          </div>
+      <div class="bg-white rounded-3xl p-5 shadow-md border border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-black text-slate-900">Horarios Semanales del Claustro</h2>
+          <p class="text-xs text-slate-500">Consulta el cuadrante completo de cualquiera de los 30 profesores de Infantil y Primaria.</p>
         </div>
-
-        <!-- Leyenda de colores -->
-        <div class="flex flex-wrap items-center justify-between gap-3 text-xs mb-5 p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80">
-          <div class="flex flex-wrap items-center gap-3">
-            <span class="font-extrabold text-slate-700 uppercase text-[11px] tracking-wider">Leyenda:</span>
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-950 font-bold border border-emerald-300 text-[11px]">
-              <i class="ph-fill ph-check-circle text-emerald-600"></i> Disponible para sustituir
-            </span>
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-950 font-bold border border-indigo-200 text-[11px]">
-              <i class="ph-fill ph-chalkboard text-indigo-600"></i> Clase lectiva
-            </span>
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-950 font-medium border border-amber-200 text-[11px]">
-              ☕ Recreo
-            </span>
-          </div>
+        <div class="w-full sm:w-80">
+          <select id="select-profesor-horario" onchange="cargarHorarioDocente()" class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-300 font-semibold text-sm focus:ring-2 focus:ring-blue-600 bg-white">
+            <option value="">-- Seleccionar profesor para ver horario --</option>
+          </select>
         </div>
+      </div>
 
-        <!-- Tabla de horarios -->
-        <div class="overflow-x-auto rounded-2xl border border-slate-200 shadow-2xs">
-          <table class="w-full text-xs text-left border-collapse" id="tabla-horarios">
-            <thead class="bg-[#132a56] text-white uppercase font-bold border-b border-slate-300">
-              <tr>
-                <th class="p-3.5 border-r border-white/15 w-36">Tramo / Hora</th>
-                <th class="p-3.5 border-r border-white/15 w-[18%]">Lunes</th>
-                <th class="p-3.5 border-r border-white/15 w-[18%]">Martes</th>
-                <th class="p-3.5 border-r border-white/15 w-[18%]">Miércoles</th>
-                <th class="p-3.5 border-r border-white/15 w-[18%]">Jueves</th>
-                <th class="p-3.5 w-[18%]">Viernes</th>
-              </tr>
-            </thead>
-            <tbody id="tbody-horarios" class="divide-y divide-slate-200 bg-white">
-              <!-- Se puebla dinámicamente -->
-            </tbody>
-          </table>
-        </div>
+      <div id="panel-horario-profesor" class="bg-white rounded-3xl p-6 shadow-md border border-slate-200/80 overflow-x-auto min-h-[300px] flex items-center justify-center text-slate-400">
+        Selecciona un profesor para consultar su horario semanal.
       </div>
     </section>
 
     <!-- ========================================== -->
-    <!-- PESTAÑA 3: HISTORIAL Y BALANCE DE CARGA    -->
+    <!-- PESTAÑA 4: EQUIDAD Y BALANCE               -->
     <!-- ========================================== -->
-    <section id="tab-historial" class="tab-content hidden space-y-6 animate-fade-in">
-      
-      <!-- Ranking de Sustituciones Realizadas -->
-      <div class="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-sm">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-          <div>
-            <h2 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-              <i class="ph-bold ph-scales text-indigo-600"></i>
-              Balance Acumulado de Sustituciones por Docente
-            </h2>
-            <p class="text-xs text-slate-500">Recuento total de sustituciones realizadas a lo largo del curso escolar.</p>
-          </div>
-        </div>
-        
-        <div id="grid-estadisticas" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          <!-- Estadísticas dinámicas -->
-        </div>
+    <section id="tab-equidad" class="tab-content hidden space-y-6 animate-fade-in">
+      <div class="bg-white rounded-3xl p-5 shadow-md border border-slate-200/80">
+        <h2 class="text-lg font-black text-slate-900">Balance de Sustituciones Realizadas</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Control de equidad para asegurar un reparto justo y equilibrado entre todo el claustro.</p>
       </div>
 
-      <!-- Tabla de Sustituciones Realizadas -->
-      <div class="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-sm">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-          <div class="flex items-center gap-2.5">
-            <h2 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-              <i class="ph-bold ph-clock-counter-clockwise text-indigo-600"></i>
-              Registro Histórico de Sustituciones
-            </h2>
-            <span class="text-xs bg-indigo-100 text-indigo-800 font-extrabold px-3 py-1 rounded-full border border-indigo-200" id="total-sustituciones-badge">0 registros</span>
-          </div>
-
-          <!-- Filtros de búsqueda en historial -->
-          <div class="flex flex-wrap items-center gap-2">
-            <div class="relative">
-              <input type="text" id="filtro-historial-texto" oninput="filtrarHistorial()" placeholder="Buscar docente, aula, materia..." class="text-xs bg-slate-50 border border-slate-300 rounded-xl pl-8 pr-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:bg-white w-56 font-medium">
-              <i class="ph-bold ph-magnifying-glass absolute left-2.5 top-2.5 text-slate-400"></i>
-            </div>
-            <input type="date" id="filtro-historial-fecha" onchange="filtrarHistorial()" class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-500 font-medium">
-            <button onclick="limpiarFiltrosHistorial()" title="Limpiar filtros" class="text-xs font-bold text-slate-600 hover:text-slate-900 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl border border-slate-200 transition cursor-pointer flex items-center gap-1">
-              <i class="ph-bold ph-arrow-counter-clockwise"></i> Limpiar
-            </button>
-          </div>
+      <div class="bg-white rounded-3xl p-6 shadow-md border border-slate-200/80">
+        <div id="lista-equidad" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <!-- Poblado dinámicamente -->
         </div>
-
-        <div class="overflow-x-auto rounded-2xl border border-slate-200">
-          <table class="w-full text-xs text-left">
-            <thead class="bg-slate-100/90 text-slate-700 uppercase font-extrabold border-b border-slate-200">
-              <tr>
-                <th class="p-3.5">Fecha y Tramo</th>
-                <th class="p-3.5">Profesor Ausente</th>
-                <th class="p-3.5">Profesor Sustituto</th>
-                <th class="p-3.5">Aula / Materia</th>
-                <th class="p-3.5 text-center">Notificar / Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="tbody-historial" class="divide-y divide-slate-200/80">
-              <!-- Se puebla dinámicamente -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ========================================== -->
-    <!-- PESTAÑA 4: CARGAR / IMPORTAR HORARIOS      -->
-    <!-- ========================================== -->
-    <section id="tab-importar" class="tab-content hidden space-y-6 animate-fade-in">
-      <div class="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-sm max-w-3xl mx-auto">
-        <div class="text-center mb-6">
-          <div class="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center text-3xl mx-auto mb-3">
-            <i class="ph-duotone ph-database"></i>
-          </div>
-          <h2 class="text-xl font-extrabold text-slate-900">Gestión Avanzada de Datos y Horarios</h2>
-          <p class="text-xs text-slate-500 mt-1">El horario oficial de Octubre-Mayo (540 sesiones lectivas + cuadrante de disponibilidad) ya se encuentra cargado y activo en SQLite.</p>
-        </div>
-
-        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-2.5 mb-5">
-          <h3 class="text-xs font-extrabold text-slate-700 uppercase">Tipos de actividad soportados en el motor:</h3>
-          <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
-            <li><span class="font-bold text-emerald-700">DISPONIBLE / HUECO:</span> Docente sin clase lectiva y habilitado para cubrir ausencias según disponibilidad y balance de equidad.</li>
-            <li><span class="font-bold text-indigo-700">LECTIVA:</span> Clase regular con grupo asignado (bloquea al docente para no ser propuesto como sustituto en esa hora).</li>
-            <li><span class="font-bold text-rose-700">NO_DISPONIBLE:</span> Tramo en el que el docente no asiste al centro o está exento de sustituciones.</li>
-          </ul>
-        </div>
-
-        <div class="space-y-3">
-          <label class="block text-xs font-bold text-slate-700">Importación manual en formato JSON:</label>
-          <textarea id="textarea-importar" rows="8" class="w-full font-mono text-xs p-3.5 bg-slate-900 text-slate-100 rounded-2xl border border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder='{"profesores": [...], "horarios": [...]}'></textarea>
-          
-          <div class="flex items-center justify-between pt-2">
-            <button onclick="cargarEjemploJSON()" class="text-xs text-indigo-600 font-bold hover:underline cursor-pointer">
-              Cargar plantilla de ejemplo
-            </button>
-            <button onclick="ejecutarImportacion()" class="py-2.5 px-5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow transition cursor-pointer">
-              Guardar e Importar JSON
-            </button>
-          </div>
-        </div>
-
       </div>
     </section>
 
   </main>
 
-  <!-- Footer Institucional (Oculto en móvil para dejar espacio a la barra inferior) -->
-  <footer class="hidden md:block bg-white border-t border-slate-200/80 py-4 mt-10 no-print">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
-      <div class="flex items-center gap-2">
-        <img src="{{ url_for('static', filename='img/logo_csb.png') }}" alt="CSB" class="w-5 h-5 object-contain">
-        <span class="font-bold text-slate-700">Colegio San Buenaventura · Franciscanos</span>
-        <span>— Educación Primaria</span>
+  <!-- Modal para Editar Tarea ("Qué deben hacer") -->
+  <div id="modal-editar-tarea" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+          <i class="ph-bold ph-pencil-simple text-blue-600"></i>
+          <span>Qué deben hacer en su hora</span>
+        </h3>
+        <button onclick="cerrarModalTarea()" class="text-slate-400 hover:text-slate-700">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
       </div>
-      <div class="text-[11px] text-slate-400">
-        Sincronizado con Google Calendar &amp; Correo Institucional <span class="text-emerald-600 font-semibold">@sanbuenaventura.org</span>
+      <div>
+        <p class="text-xs text-slate-500 mb-2" id="modal-info-sustitucion"></p>
+        <textarea id="modal-input-tarea" rows="4" class="w-full p-3.5 rounded-2xl border border-slate-300 font-medium text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none" placeholder="Instrucciones o tarea que debe realizar el grupo durante esta sesión..."></textarea>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="cerrarModalTarea()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">Cancelar</button>
+        <button onclick="guardarTareaModal()" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition">Guardar Tarea</button>
       </div>
     </div>
-  </footer>
+  </div>
 
-  <!-- Barra de Navegación Inferior estilo App Nativa (Solo Móvil) -->
-  <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0b1936]/95 backdrop-blur-xl border-t border-white/15 px-2 pt-1.5 pb-2 shadow-2xl no-print">
-    <div class="grid grid-cols-4 gap-1 max-w-md mx-auto">
-      <button type="button" onclick="switchTab('asignar')" id="mob-tab-btn-asignar" class="mob-tab-btn flex flex-col items-center justify-center py-1.5 rounded-xl bg-white text-slate-950 font-extrabold transition-all active:scale-95">
-        <i class="ph-fill ph-lightning text-amber-500 text-lg"></i>
-        <span class="text-[10px] mt-0.5">Sustituir</span>
-      </button>
-      <button type="button" onclick="switchTab('horarios')" id="mob-tab-btn-horarios" class="mob-tab-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-blue-200/80 font-semibold transition-all active:scale-95">
-        <i class="ph-bold ph-table text-lg"></i>
-        <span class="text-[10px] mt-0.5">Cuadrante</span>
-      </button>
-      <button type="button" onclick="switchTab('historial')" id="mob-tab-btn-historial" class="mob-tab-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-blue-200/80 font-semibold transition-all active:scale-95">
-        <i class="ph-bold ph-chart-bar text-lg"></i>
-        <span class="text-[10px] mt-0.5">Historial</span>
-      </button>
-      <a href="https://calendar.google.com/calendar/u/0?cid=c2FuYnVlbmF2ZW50dXJhLm9yZ19hM2wxZWcxcnB1OWA0c2k3aWhwNDhncWpuc0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center justify-center py-1.5 rounded-xl text-emerald-300 font-bold transition-all active:scale-95">
-        <i class="ph-bold ph-calendar-check text-lg"></i>
-        <span class="text-[10px] mt-0.5">Calendar</span>
-      </a>
-    </div>
-  </nav>
-
-  <!-- Script principal de la aplicación con etapa Primaria -->
+  <!-- Lógica Javascript de la Aplicación -->
   <script>
-    window.ETAPA_ACTIVA = "Primaria";
+    let profesoresData = [];
+    let tramosData = [];
+    let sustitucionesData = [];
+    let etapaSeleccionada = "Todos";
+    let modoAusencia = "dia_completo";
+    let evaluacionActual = null;
+    let editandoSubId = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setHoy();
+      cargarDatosIniciales();
+    });
+
+    function setHoy() {
+      const today = new Date().toISOString().split("T")[0];
+      document.getElementById("input-fecha").value = today;
+    }
+
+    function setManana() {
+      const d = new Date();
+      d.setDate(d.getDate() + 1);
+      document.getElementById("input-fecha").value = d.toISOString().split("T")[0];
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.classList.remove("bg-white", "text-blue-950", "shadow-md");
+        btn.classList.add("text-blue-100");
+      });
+
+      const tabEl = document.getElementById("tab-" + tabId);
+      const btnEl = document.getElementById("tab-btn-" + tabId);
+      if (tabEl) tabEl.classList.remove("hidden");
+      if (btnEl) {
+        btnEl.classList.add("bg-white", "text-blue-950", "shadow-md");
+        btnEl.classList.remove("text-blue-100");
+      }
+
+      if (tabId === "cuadrante") {
+        cargarSustituciones();
+      } else if (tabId === "equidad") {
+        renderEquidad();
+      }
+    }
+
+    function setModoAusencia(modo) {
+      modoAusencia = modo;
+      const btnDia = document.getElementById("btn-modo-dia");
+      const btnHora = document.getElementById("btn-modo-hora");
+      const wrapperHora = document.getElementById("wrapper-hora-concreta");
+
+      if (modo === "dia_completo") {
+        btnDia.className = "p-3 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-blue-900 font-extrabold text-xs flex items-center justify-center gap-1.5 transition";
+        btnHora.className = "p-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 transition";
+        wrapperHora.classList.add("hidden");
+      } else {
+        btnHora.className = "p-3 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-blue-900 font-extrabold text-xs flex items-center justify-center gap-1.5 transition";
+        btnDia.className = "p-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 transition";
+        wrapperHora.classList.remove("hidden");
+      }
+    }
+
+    function filtrarEtapaProf(etapa) {
+      etapaSeleccionada = etapa;
+      ['todos', 'pri', 'inf'].forEach(k => {
+        const b = document.getElementById("btn-etapa-" + k);
+        if (b) {
+          b.className = "px-2 py-0.5 rounded-lg text-slate-600 hover:text-slate-900";
+        }
+      });
+      const activeBtn = etapa === 'Todos' ? 'todos' : (etapa === 'Primaria' ? 'pri' : 'inf');
+      const b = document.getElementById("btn-etapa-" + activeBtn);
+      if (b) b.className = "px-2 py-0.5 rounded-lg bg-white text-blue-900 shadow-xs";
+
+      poblarSelectProfesores();
+    }
+
+    async function cargarDatosIniciales() {
+      try {
+        const res = await fetch("/api/initial-data");
+        const data = await res.json();
+        profesoresData = data.todos_los_profesores || data.profesores;
+        tramosData = data.tramos;
+        sustitucionesData = data.ultimas_sustituciones || [];
+
+        poblarSelectProfesores();
+        poblarSelectHorarios();
+        renderTablaSustituciones();
+        renderEquidad();
+      } catch (err) {
+        showToast("Error conectando con el servidor", "error");
+      }
+    }
+
+    function poblarSelectProfesores() {
+      const sel = document.getElementById("select-profesor-ausente");
+      sel.innerHTML = '<option value="">-- Selecciona profesor ausente --</option>';
+
+      let filtrados = profesoresData;
+      if (etapaSeleccionada !== "Todos") {
+        filtrados = profesoresData.filter(p => p.etapa === etapaSeleccionada || (p.departamento && p.departamento.includes(etapaSeleccionada)));
+      }
+
+      filtrados.sort((a,b) => a.nombre.localeCompare(b.nombre)).forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p.id;
+        opt.textContent = `${p.nombre} (${p.etapa})`;
+        sel.appendChild(opt);
+      });
+
+      document.getElementById("contador-docentes").textContent = `${filtrados.length} docentes`;
+    }
+
+    function poblarSelectHorarios() {
+      const sel = document.getElementById("select-profesor-horario");
+      sel.innerHTML = '<option value="">-- Seleccionar profesor para ver horario --</option>';
+      profesoresData.slice().sort((a,b) => a.nombre.localeCompare(b.nombre)).forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p.id;
+        opt.textContent = `${p.nombre} (${p.etapa})`;
+        sel.appendChild(opt);
+      });
+    }
+
+    function onProfesorAusenteChange() {
+      document.getElementById("panel-vacio").classList.remove("hidden");
+      document.getElementById("panel-resultados").classList.add("hidden");
+    }
+
+    function onPeriodoChange() {
+      // Si cambia el tramo en hora individual
+    }
+
+    async function buscarSustitutos() {
+      const fecha = document.getElementById("input-fecha").value;
+      const profesorId = document.getElementById("select-profesor-ausente").value;
+
+      if (!fecha) {
+        showToast("Por favor selecciona una fecha.", "warning");
+        return;
+      }
+      if (!profesorId) {
+        showToast("Por favor selecciona el profesor ausente.", "warning");
+        return;
+      }
+
+      const panelVacio = document.getElementById("panel-vacio");
+      const panelResultados = document.getElementById("panel-resultados");
+      panelVacio.classList.add("hidden");
+      panelResultados.classList.remove("hidden");
+      panelResultados.innerHTML = `
+        <div class="bg-white rounded-3xl p-10 text-center border border-slate-200 shadow-sm">
+          <i class="ph ph-spinner animate-spin text-4xl text-blue-600 mb-2"></i>
+          <p class="text-sm font-bold text-slate-700">Analizando horarios y prioridades (Guardia ➔ Reunión ➔ Apoyo)...</p>
+        </div>
+      `;
+
+      try {
+        if (modoAusencia === "dia_completo") {
+          const periodosLectivos = ["1H", "2H", "3H", "4H", "5H"];
+          const res = await fetch("/api/buscar-sustitutos-multiple", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              fecha: fecha,
+              profesor_ausente_id: profesorId,
+              periodos: periodosLectivos
+            })
+          });
+          const data = await res.json();
+          if (data.error) throw new Error(data.error);
+          evaluacionActual = data;
+          renderResultadosMultiple(data);
+        } else {
+          const periodoId = document.getElementById("select-periodo").value;
+          const res = await fetch("/api/buscar-sustitutos", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              fecha: fecha,
+              periodo_id: periodoId,
+              profesor_ausente_id: profesorId
+            })
+          });
+          const data = await res.json();
+          if (data.error) throw new Error(data.error);
+          renderResultadosIndividual(data);
+        }
+      } catch (err) {
+        panelResultados.innerHTML = `
+          <div class="bg-rose-50 border border-rose-200 rounded-3xl p-6 text-rose-800">
+            <h4 class="font-bold mb-1">Aviso al buscar sustitutos</h4>
+            <p class="text-xs">${err.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderResultadosMultiple(data) {
+      const panel = document.getElementById("panel-resultados");
+      const ausente = data.profesor_ausente;
+      
+      let html = `
+        <div class="bg-white rounded-3xl p-5 shadow-md border border-slate-200/90 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <span class="text-[11px] font-black uppercase text-blue-600 tracking-wider">Plan de Sustitución para el Día</span>
+              <h3 class="text-base font-extrabold text-slate-900">${ausente.nombre} (${ausente.etapa})</h3>
+            </div>
+            <span class="text-xs font-bold text-slate-500">${data.fecha}</span>
+          </div>
+
+          <div class="space-y-3.5">
+      `;
+
+      data.tramos_evaluados.forEach((tramo, idx) => {
+        const tieneClase = tramo.tiene_clase_lectiva;
+        const yaAsignada = tramo.ya_asignada;
+        const rec = tramo.recomendado;
+
+        html += `
+          <div class="rounded-2xl p-4 border transition ${tieneClase ? 'bg-slate-50/70 border-slate-200' : 'bg-slate-100/50 border-slate-200/60 opacity-80'}" id="slot-card-${tramo.periodo_id}">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-xl text-xs font-black bg-blue-900 text-white">${tramo.periodo_nombre.split(' ')[0]}</span>
+                <span class="text-xs font-bold text-slate-700">${tramo.hora_inicio} - ${tramo.hora_fin}</span>
+                ${tieneClase 
+                  ? `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">Clase: ${tramo.materia} (${tramo.curso_grupo})</span>`
+                  : `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-200">No lectiva: ${tramo.descripcion_ausente}</span>`
+                }
+              </div>
+
+              ${yaAsignada ? `
+                <span class="px-2.5 py-1 rounded-xl text-xs font-extrabold bg-emerald-600 text-white flex items-center gap-1">
+                  <i class="ph-bold ph-check"></i> Asignada a ${yaAsignada.profesor_sustituto_nombre}
+                </span>
+              ` : ''}
+            </div>
+        `;
+
+        if (!tieneClase) {
+          html += `
+            <p class="text-xs text-slate-500 italic">
+              ℹ️ Según los criterios de Escuelas Pías Aluche, las horas no lectivas (guardias, reuniones o apoyos) no se cubren.
+            </p>
+          </div>`;
+          return;
+        }
+
+        if (yaAsignada) {
+          html += `
+            <div class="text-xs text-slate-600 mt-2 bg-white p-2.5 rounded-xl border border-slate-200">
+              <strong>Tarea asignada:</strong> ${yaAsignada.observaciones || '—'}
+            </div>
+          </div>`;
+          return;
+        }
+
+        // Selector de sustituto y tarea para este tramo
+        html += `
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3 mt-3 pt-3 border-t border-slate-200/80">
+            <div class="md:col-span-6">
+              <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Profesor Sustituto</label>
+              <select id="select-sustituto-${tramo.periodo_id}" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold bg-white focus:ring-2 focus:ring-blue-600">
+        `;
+
+        tramo.candidatos.forEach(c => {
+          const isRec = rec && rec.profesor.id === c.profesor.id;
+          const badgePrio = c.prioridad_categoria;
+          html += `
+            <option value="${c.profesor.id}" ${isRec ? 'selected' : ''}>
+              ${isRec ? '★ RECOMENDADO: ' : ''}${c.profesor.nombre} [${badgePrio}] (${c.profesor.sustituciones_realizadas} previas)
+            </option>
+          `;
+        });
+
+        html += `
+              </select>
+              ${rec ? `
+                <p class="text-[11px] text-blue-700 font-medium mt-1">
+                  ✨ <strong>Sugerencia oficial:</strong> ${rec.profesor.nombre} (${rec.motivo})
+                </p>
+              ` : ''}
+            </div>
+
+            <div class="md:col-span-6">
+              <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Qué deben hacer en su hora</label>
+              <input type="text" id="input-tarea-${tramo.periodo_id}" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-blue-600" placeholder="Ej: Ejercicios 1 a 4 libro mate pág. 50...">
+            </div>
+          </div>
+
+          <div class="flex justify-end mt-3">
+            <button onclick="asignarTramoIndividual('${tramo.periodo_id}')" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs rounded-xl shadow-sm transition flex items-center gap-1.5">
+              <i class="ph-bold ph-check"></i>
+              <span>Confirmar Sustitución de esta Hora</span>
+            </button>
+          </div>
+        </div>`;
+      });
+
+      html += `
+          </div>
+        </div>
+      `;
+
+      panel.innerHTML = html;
+    }
+
+    function renderResultadosIndividual(data) {
+      const panel = document.getElementById("panel-resultados");
+      const tieneClase = data.es_hora_lectiva;
+      const rec = data.recomendado;
+
+      let html = `
+        <div class="bg-white rounded-3xl p-6 shadow-md border border-slate-200/90 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <span class="text-[11px] font-black uppercase text-blue-600 tracking-wider">${data.periodo.nombre}</span>
+              <h3 class="text-base font-extrabold text-slate-900">${data.profesor_ausente.nombre} (${data.profesor_ausente.etapa})</h3>
+            </div>
+            <span class="text-xs font-bold text-slate-500">${data.fecha}</span>
+          </div>
+      `;
+
+      if (!tieneClase) {
+        html += `
+          <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm">
+            <strong>Aviso de Criterio:</strong> El profesor ausente tiene <em>"${data.actividad_ausente}"</em> a esta hora.<br>
+            Según los criterios del centro, <strong>solo se cubren horas de clase con alumnos</strong>.
+          </div>
+        </div>`;
+        panel.innerHTML = html;
+        return;
+      }
+
+      html += `
+        <div class="p-3.5 rounded-2xl bg-blue-50 border border-blue-200 text-blue-950 text-xs flex items-center justify-between">
+          <span>Clase lectiva detectada: <strong>${data.materia_detectada}</strong> (${data.curso_detectado})</span>
+          <span class="font-bold text-blue-700">${data.total_candidatos} docentes disponibles</span>
+        </div>
+
+        <div class="space-y-3 pt-2">
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Candidatos Disponibles (Ordenados por Guardia ➔ Reunión ➔ Apoyo y Menor Carga)</label>
+          <div class="max-h-72 overflow-y-auto space-y-2 pr-1">
+      `;
+
+      data.candidatos.forEach((c, idx) => {
+        const isRec = rec && rec.profesor.id === c.profesor.id;
+        html += `
+          <label class="flex items-center justify-between p-3 rounded-2xl border transition cursor-pointer ${isRec ? 'bg-amber-50/80 border-amber-300 ring-2 ring-amber-400/40' : 'bg-slate-50 hover:bg-white border-slate-200'}">
+            <div class="flex items-center gap-3">
+              <input type="radio" name="radio-sustituto" value="${c.profesor.id}" ${isRec ? 'checked' : ''} class="w-4 h-4 text-blue-600">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-sm text-slate-900">${c.profesor.nombre}</span>
+                  <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full ${c.prioridad_categoria.includes('Guardia') ? 'bg-emerald-100 text-emerald-800' : (c.prioridad_categoria.includes('Reunión') ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800')}">
+                    ${c.prioridad_categoria}
+                  </span>
+                  ${isRec ? '<span class="text-[10px] font-black bg-amber-400 text-slate-950 px-2 py-0.2 rounded-md">★ RECOMENDADO</span>' : ''}
+                </div>
+                <p class="text-xs text-slate-500 mt-0.5">${c.motivo}</p>
+              </div>
+            </div>
+            <span class="text-xs font-extrabold text-slate-600">${c.profesor.sustituciones_realizadas} sustituciones</span>
+          </label>
+        `;
+      });
+
+      html += `
+          </div>
+        </div>
+
+        <div class="pt-2">
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Qué deben hacer en su hora al que le toca</label>
+          <textarea id="input-tarea-individual" rows="3" class="w-full p-3 rounded-2xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-blue-600" placeholder="Ej: Realizar los ejercicios 1 al 4 de la página 50 de Matemáticas..."></textarea>
+        </div>
+
+        <div class="flex justify-end pt-2">
+          <button onclick="asignarIndividualDesdeRadio('${data.periodo.id}', '${data.materia_detectada}', '${data.curso_detectado}')" class="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm rounded-2xl shadow-lg transition flex items-center gap-2">
+            <i class="ph-bold ph-check text-base"></i>
+            <span>Confirmar Asignación</span>
+          </button>
+        </div>
+      </div>`;
+
+      panel.innerHTML = html;
+    }
+
+    async function asignarTramoIndividual(periodoId) {
+      if (!evaluacionActual) return;
+      const fecha = evaluacionActual.fecha;
+      const ausenteId = evaluacionActual.profesor_ausente.id;
+      const tramo = evaluacionActual.tramos_evaluados.find(t => t.periodo_id === periodoId);
+      if (!tramo) return;
+
+      const sustitutoId = document.getElementById("select-sustituto-" + periodoId).value;
+      const tarea = document.getElementById("input-tarea-" + periodoId).value.trim();
+
+      if (!sustitutoId) {
+        showToast("Selecciona un sustituto.", "warning");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/asignar-sustitucion", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fecha: fecha,
+            periodo_id: periodoId,
+            profesor_ausente_id: ausenteId,
+            profesor_sustituto_id: sustitutoId,
+            aula: tramo.aula,
+            curso_grupo: tramo.curso_grupo,
+            materia: tramo.materia,
+            que_hacer: tarea
+          })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        showToast("Sustitución guardada en el documento compartido", "success");
+        buscarSustitutos(); // Recargar cuadrante
+        cargarDatosIniciales();
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    async function asignarIndividualDesdeRadio(periodoId, materia, curso) {
+      const fecha = document.getElementById("input-fecha").value;
+      const ausenteId = document.getElementById("select-profesor-ausente").value;
+      const checkedRadio = document.querySelector("input[name='radio-sustituto']:checked");
+      if (!checkedRadio) {
+        showToast("Por favor selecciona un sustituto.", "warning");
+        return;
+      }
+      const sustitutoId = checkedRadio.value;
+      const tarea = document.getElementById("input-tarea-individual").value.trim();
+
+      try {
+        const res = await fetch("/api/asignar-sustitucion", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fecha: fecha,
+            periodo_id: periodoId,
+            profesor_ausente_id: ausenteId,
+            profesor_sustituto_id: sustitutoId,
+            aula: curso,
+            curso_grupo: curso,
+            materia: materia,
+            que_hacer: tarea
+          })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        showToast("Sustitución guardada exitosamente", "success");
+        switchTab("cuadrante");
+        cargarDatosIniciales();
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    async function cargarSustituciones() {
+      try {
+        const res = await fetch("/api/sustituciones");
+        sustitucionesData = await res.json();
+        renderTablaSustituciones();
+      } catch (err) {
+        showToast("Error cargando sustituciones", "error");
+      }
+    }
+
+    function renderTablaSustituciones() {
+      const tbody = document.getElementById("tbody-sustituciones");
+      if (!sustitucionesData || sustitucionesData.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="text-center py-12 text-slate-400 font-semibold">
+              No hay sustituciones registradas aún en el documento compartido.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Ordenar por fecha y periodo
+      const ordenadas = sustitucionesData.slice().sort((a,b) => (b.fecha + b.periodo_id).localeCompare(a.fecha + a.periodo_id));
+
+      let html = "";
+      ordenadas.forEach((s, idx) => {
+        const bg = idx % 2 === 0 ? "bg-white" : "bg-slate-50/60";
+        const tarea = s.que_hacer || s.observaciones || "—";
+        html += `
+          <tr class="${bg} hover:bg-blue-50/40 transition">
+            <td class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">${s.fecha}</td>
+            <td class="py-3 px-4 font-semibold text-slate-600 whitespace-nowrap">${s.periodo_nombre.split(' ')[0]}</td>
+            <td class="py-3 px-4 font-bold text-slate-900">${s.profesor_ausente_nombre}</td>
+            <td class="py-3 px-4 text-center font-extrabold text-blue-700">${s.curso_grupo || s.aula || '—'}</td>
+            <td class="py-3 px-4 font-medium text-slate-700">${s.materia || '—'}</td>
+            <td class="py-3 px-4 font-extrabold text-emerald-800">${s.profesor_sustituto_nombre}</td>
+            <td class="py-3 px-4 text-slate-800 max-w-xs cursor-pointer group" onclick="abrirModalTarea('${s.id}')" title="Haz clic para editar la tarea">
+              <div class="flex items-center justify-between gap-1.5">
+                <span class="truncate">${tarea}</span>
+                <i class="ph-bold ph-pencil-simple text-slate-400 group-hover:text-blue-600 transition shrink-0"></i>
+              </div>
+            </td>
+            <td class="py-3 px-4 text-center">
+              <button onclick="eliminarSustitucion('${s.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 transition" title="Eliminar sustitución">
+                <i class="ph-bold ph-trash text-base"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    async function eliminarSustitucion(id) {
+      if (!confirm("¿Seguro que deseas eliminar esta sustitución del documento compartido?")) return;
+      try {
+        const res = await fetch(`/api/sustituciones/${id}`, { method: "DELETE" });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        showToast("Sustitución eliminada", "info");
+        cargarDatosIniciales();
+        cargarSustituciones();
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    function abrirModalTarea(subId) {
+      editandoSubId = subId;
+      const sub = sustitucionesData.find(s => s.id === subId);
+      if (!sub) return;
+
+      document.getElementById("modal-info-sustitucion").textContent = 
+        `${sub.fecha} · ${sub.periodo_nombre} · ${sub.profesor_ausente_nombre} ➔ ${sub.profesor_sustituto_nombre}`;
+      document.getElementById("modal-input-tarea").value = sub.que_hacer || sub.observaciones || "";
+      document.getElementById("modal-editar-tarea").classList.remove("hidden");
+    }
+
+    function cerrarModalTarea() {
+      document.getElementById("modal-editar-tarea").classList.add("hidden");
+      editandoSubId = null;
+    }
+
+    async function guardarTareaModal() {
+      if (!editandoSubId) return;
+      const tarea = document.getElementById("modal-input-tarea").value.trim();
+
+      try {
+        const res = await fetch(`/api/sustituciones/${editandoSubId}/tarea`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ que_hacer: tarea })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        showToast("Tarea actualizada correctamente", "success");
+        cerrarModalTarea();
+        cargarSustituciones();
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    async function copiarTablaParaWord() {
+      if (!sustitucionesData || sustitucionesData.length === 0) {
+        showToast("No hay sustituciones registradas para copiar.", "warning");
+        return;
+      }
+
+      const ordenadas = sustitucionesData.slice().sort((a,b) => (a.fecha + a.periodo_id).localeCompare(b.fecha + b.periodo_id));
+
+      let html = `
+        <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; font-family: Calibri, sans-serif; font-size: 11pt; width: 100%;">
+          <thead>
+            <tr style="background-color: #1E3A8A; color: #FFFFFF; font-weight: bold; text-align: center;">
+              <th>Día / Fecha</th>
+              <th>Hora</th>
+              <th>Quién falta</th>
+              <th>Clase</th>
+              <th>Asignatura</th>
+              <th>Quién sustituye</th>
+              <th>Qué deben hacer en su hora</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      ordenadas.forEach((s, idx) => {
+        const bg = idx % 2 === 1 ? "#F8FAFC" : "#FFFFFF";
+        const tarea = s.que_hacer || s.observaciones || "—";
+        html += `
+          <tr style="background-color: ${bg};">
+            <td style="text-align: center;">${s.fecha}</td>
+            <td style="text-align: center;">${s.periodo_nombre}</td>
+            <td>${s.profesor_ausente_nombre}</td>
+            <td style="text-align: center; font-weight: bold;">${s.curso_grupo || s.aula || '—'}</td>
+            <td>${s.materia || '—'}</td>
+            <td style="font-weight: bold; color: #1E3A8A;">${s.profesor_sustituto_nombre}</td>
+            <td>${tarea}</td>
+          </tr>
+        `;
+      });
+
+      html += `
+          </tbody>
+        </table>
+      `;
+
+      try {
+        const blobHtml = new Blob([html], { type: "text/html" });
+        const blobText = new Blob([document.getElementById("tabla-documento-word").innerText], { type: "text/plain" });
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            "text/html": blobHtml,
+            "text/plain": blobText
+          })
+        ]);
+        showToast("¡Tabla copiada con formato! Pégala (Ctrl+V) en Word o Drive.", "success");
+      } catch (err) {
+        // Fallback básico
+        showToast("Copiando...", "info");
+      }
+    }
+
+    async function cargarHorarioDocente() {
+      const profId = document.getElementById("select-profesor-horario").value;
+      const panel = document.getElementById("panel-horario-profesor");
+      if (!profId) {
+        panel.innerHTML = "Selecciona un profesor para consultar su horario semanal.";
+        return;
+      }
+
+      panel.innerHTML = '<i class="ph ph-spinner animate-spin text-3xl text-blue-600"></i>';
+
+      try {
+        const res = await fetch(`/api/horarios?profesor_id=${profId}`);
+        const items = await res.json();
+        
+        const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+        const tramos = [
+          { id: "1H", nombre: "1ª Hora (09:05 - 10:05)" },
+          { id: "2H", nombre: "2ª Hora (10:05 - 11:05)" },
+          { id: "3H", nombre: "3ª Hora (11:35 - 12:35)" },
+          { id: "4H", nombre: "4ª Hora (14:30 - 15:30)" },
+          { id: "5H", nombre: "5ª Hora (15:30 - 16:30)" }
+        ];
+
+        let html = `
+          <div class="w-full">
+            <table class="w-full text-center border-collapse border border-slate-200 text-xs">
+              <thead>
+                <tr class="bg-blue-900 text-white font-extrabold">
+                  <th class="py-2.5 px-3 border border-blue-800">Horas</th>
+                  ${dias.map(d => `<th class="py-2.5 px-3 border border-blue-800">${d}</th>`).join('')}
+                </tr>
+              </thead>
+              <tbody>
+        `;
+
+        tramos.forEach(t => {
+          html += `<tr><td class="py-2 px-3 bg-slate-100 font-bold border border-slate-200">${t.nombre}</td>`;
+          dias.forEach((d, dIdx) => {
+            const match = items.find(it => it.dia_semana === dIdx && it.periodo_id === t.id);
+            if (!match) {
+              html += `<td class="py-2 px-3 border border-slate-200 text-slate-400 italic">Libre</td>`;
+            } else if (match.tipo_actividad === 'LECTIVA') {
+              html += `<td class="py-2 px-3 border border-slate-200 bg-blue-50 font-bold text-blue-900">${match.materia}<br><span class="text-[10px] text-blue-600 font-semibold">${match.aula}</span></td>`;
+            } else if (match.tipo_actividad === 'GUARDIA') {
+              html += `<td class="py-2 px-3 border border-slate-200 bg-emerald-100 font-extrabold text-emerald-800">🛡️ Guardia</td>`;
+            } else if (match.tipo_actividad === 'APOYO') {
+              html += `<td class="py-2 px-3 border border-slate-200 bg-purple-100 font-bold text-purple-900">🤝 ${match.descripcion || 'Apoyo'}</td>`;
+            } else {
+              html += `<td class="py-2 px-3 border border-slate-200 bg-amber-50 text-amber-900 font-medium">👥 ${match.descripcion || 'Reunión'}</td>`;
+            }
+          });
+          html += `</tr>`;
+        });
+
+        html += `
+              </tbody>
+            </table>
+          </div>
+        `;
+
+        panel.innerHTML = html;
+      } catch (err) {
+        panel.innerHTML = `<span class="text-rose-600 font-bold">Error cargando el horario: ${err.message}</span>`;
+      }
+    }
+
+    function renderEquidad() {
+      const cont = document.getElementById("lista-equidad");
+      if (!cont) return;
+
+      const ordenados = profesoresData.slice().sort((a,b) => b.sustituciones_realizadas - a.sustituciones_realizadas);
+      const maxSubs = Math.max(1, ...ordenados.map(p => p.sustituciones_realizadas));
+
+      let html = "";
+      ordenados.forEach(p => {
+        const pct = Math.round((p.sustituciones_realizadas / maxSubs) * 100);
+        html += `
+          <div class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50 flex items-center justify-between gap-3">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-bold text-xs text-slate-900 truncate">${p.nombre}</span>
+                <span class="text-xs font-black text-blue-900">${p.sustituciones_realizadas}</span>
+              </div>
+              <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                <div class="bg-blue-600 h-full rounded-full transition-all" style="width: ${pct}%"></div>
+              </div>
+              <span class="text-[10px] text-slate-500 font-medium">${p.etapa}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      cont.innerHTML = html;
+    }
+
+    function showToast(mensaje, tipo = "info") {
+      const container = document.getElementById("toast-container");
+      const el = document.createElement("div");
+      
+      let colors = "bg-slate-900 text-white border-slate-700";
+      let icon = "ph-info";
+      if (tipo === "success") {
+        colors = "bg-emerald-900 text-emerald-100 border-emerald-700";
+        icon = "ph-check-circle";
+      } else if (tipo === "error") {
+        colors = "bg-rose-900 text-rose-100 border-rose-700";
+        icon = "ph-warning-circle";
+      } else if (tipo === "warning") {
+        colors = "bg-amber-900 text-amber-100 border-amber-700";
+        icon = "ph-warning";
+      }
+
+      el.className = `p-3.5 rounded-2xl shadow-xl border flex items-center gap-2.5 text-xs font-bold animate-fade-in pointer-events-auto ${colors}`;
+      el.innerHTML = `<i class="ph-bold ${icon} text-base shrink-0"></i><span>${mensaje}</span>`;
+
+      container.appendChild(el);
+      setTimeout(() => {
+        el.remove();
+      }, 4000);
+    }
   </script>
-  <script src="/static/js/app.js"></script>
+
 </body>
 </html>

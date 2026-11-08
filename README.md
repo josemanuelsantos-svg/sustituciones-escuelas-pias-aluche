@@ -1,50 +1,53 @@
-# Sistema de Sustituciones Escolares - Colegio San Buenaventura
+# Sistema de Sustituciones Escolares — Escuelas Pías Aluche
 
-Aplicación web para la gestión ágil, equitativa e inteligente de sustituciones de profesores, conectada a Google Calendar y WhatsApp.
-
----
-
-## 🚀 Opciones para Colgar la Aplicación en Internet (Gratis y Rápido)
-
-### Opción 1: Render.com (Recomendada - 100% Gratuita)
-
-1. Sube este proyecto a tu cuenta de **GitHub** (ver instrucciones abajo).
-2. Entra en **[render.com](https://render.com/)** e inicia sesión con tu cuenta de GitHub.
-3. Haz clic en **New +** ➔ **Web Service**.
-4. Conecta el repositorio que acabas de subir.
-5. Render detectará automáticamente el archivo `render.yaml` y `Procfile`.
-6. Pulsa **Create Web Service**.
-7. En 2 minutos tendrás una URL pública y segura (`https://sustituciones-san-buenaventura.onrender.com`) accesible desde cualquier móvil o navegador del centro.
+Aplicación web diseñada específicamente para **Vero** y el **Colegio Nuestra Señora de las Escuelas Pías (Aluche)** para la gestión ágil, equitativa e inteligente de sustituciones de profesores en Educación Infantil y Primaria, sincronizada con su **Documento Compartido semanal en Word / Drive**.
 
 ---
 
-### Opción 2: Railway.app (Rápida y Automática)
+## 🎯 Criterios y Reglas de Sustitución del Centro
 
-1. Entra en **[railway.app](https://railway.app/)**.
-2. Haz clic en **New Project** ➔ **Deploy from GitHub repo**.
-3. Selecciona este repositorio.
-4. Railway detectará el `Dockerfile` y `Procfile` y desplegará la aplicación al instante dándote un dominio público `.up.railway.app`.
+1. **Horas que se cubren**:
+   * **Solo se sustituyen las horas de clase regular con alumnos**.
+   * Si el profesor ausente tiene asignada guardia, reunión o apoyo, **no se cubre**.
+2. **Orden estricto de prelación del sustituto**:
+   * **1º Guardia**: Profesores con guardia oficial en esa sesión.
+   * **2º Reuniones**: Profesores con reuniones, coordinación, COCOPE, EDE, proyectos, presencia o huecos no lectivos.
+   * **3º Apoyos**: Profesores con horas de apoyo lectivo o compensatoria.
+3. **Afinidad de etapa**:
+   * Primaria sustituye a Primaria e Infantil a Infantil si es posible. Si no hay docentes disponibles en la misma etapa, se recurre a la otra etapa.
+4. **Criterio de equidad**:
+   * A igualdad de categoría de disponibilidad, el sistema prioriza a quien lleve **menos sustituciones acumuladas** en el historial.
 
 ---
 
-### Opción 3: Despliegue con Docker (En cualquier servidor o VPS propio)
+## 📋 Columnas del Documento Compartido (Word)
+
+La aplicación genera y exporta exactamente la tabla semanal con las 6 columnas del centro:
+1. **Día / Fecha**
+2. **Hora** (ej. `09:05 - 10:05`, `10:05 - 11:05`, `11:35 - 12:35`, `14:30 - 15:30`, `15:30 - 16:30`)
+3. **Quién falta** (Profesor ausente)
+4. **Clase** (Curso y grupo: `6º EP-C`, `3 años-A`, etc.)
+5. **Asignatura** (Materia oficial)
+6. **Quién sustituye** (Docente seleccionado)
+7. **Qué deben hacer en su hora al que le toca** (Tarea/observaciones para el aula)
+
+---
+
+## 🚀 Puesta en Marcha Local
 
 ```bash
-# 1. Construir la imagen Docker
-docker build -t sustituciones-colegio .
+# 1. Instalar dependencias si fuera necesario
+pip install -r requirements.txt
 
-# 2. Ejecutar el contenedor en el puerto deseado (ej. 5055 u 80)
-docker run -d -p 5055:5055 --name sustituciones sustituciones-colegio
+# 2. Iniciar el servidor
+python3 app.py
 ```
+
+Abre en tu navegador: [http://127.0.0.1:5055](http://127.0.0.1:5055)
 
 ---
 
-## 📦 Comandos para subir el proyecto a GitHub:
+## 📥 Exportación y Copiado Rápido
 
-Desde esta carpeta (`/Users/jose/.gemini/antigravity/scratch/sustituciones-colegio`):
-
-```bash
-# 1. Crear el repositorio 'sustituciones-san-buenaventura' en tu cuenta de GitHub (https://github.com/new)
-# 2. Subir directamente:
-git push -u origin main
-```
+* **Descargar Word (.docx)**: Un botón directo en la cabecera del cuadrante para descargar el archivo Word oficial semanal con la tabla formateada y editable.
+* **Copiar para Word / Drive**: Un botón que copia la tabla en formato HTML enriquecido al portapapeles. Al hacer `Ctrl+V` (o `Cmd+V`) en Word o Google Docs, se pega directamente con los estilos, encabezados y colores del centro.
