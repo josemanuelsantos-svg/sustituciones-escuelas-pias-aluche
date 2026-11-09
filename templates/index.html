@@ -68,25 +68,32 @@
         </div>
       </div>
 
-      <!-- Navigation Tabs -->
-      <nav class="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-2xl border border-white/10 shadow-inner">
-        <button onclick="switchTab('asignar')" id="tab-btn-asignar" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all bg-white text-blue-950 shadow-md flex items-center gap-1.5">
-          <i class="ph-bold ph-lightning text-amber-500"></i>
-          <span>Asignar</span>
-        </button>
-        <button onclick="switchTab('cuadrante')" id="tab-btn-cuadrante" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-white/10 flex items-center gap-1.5">
-          <i class="ph-bold ph-file-doc text-emerald-400"></i>
-          <span>Documento Word</span>
-        </button>
-        <button onclick="switchTab('horarios')" id="tab-btn-horarios" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-white/10 flex items-center gap-1.5">
-          <i class="ph-bold ph-calendar-blank text-blue-400"></i>
-          <span class="hidden md:inline">Horarios</span>
-        </button>
-        <button onclick="switchTab('equidad')" id="tab-btn-equidad" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-white/10 flex items-center gap-1.5">
-          <i class="ph-bold ph-scales text-purple-400"></i>
-          <span class="hidden md:inline">Equidad</span>
-        </button>
-      </nav>
+      <!-- Navigation Tabs & Logout -->
+      <div class="flex items-center gap-2">
+        <nav class="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-2xl border border-white/10 shadow-inner">
+          <button onclick="switchTab('asignar')" id="tab-btn-asignar" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all bg-white text-blue-950 shadow-md flex items-center gap-1.5">
+            <i class="ph-bold ph-lightning text-amber-500"></i>
+            <span>Asignar</span>
+          </button>
+          <button onclick="switchTab('cuadrante')" id="tab-btn-cuadrante" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-white/10 flex items-center gap-1.5">
+            <i class="ph-bold ph-file-doc text-emerald-400"></i>
+            <span>Documento Word</span>
+          </button>
+          <button onclick="switchTab('horarios')" id="tab-btn-horarios" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-white/10 flex items-center gap-1.5">
+            <i class="ph-bold ph-calendar-blank text-blue-400"></i>
+            <span class="hidden md:inline">Horarios</span>
+          </button>
+          <button onclick="switchTab('equidad')" id="tab-btn-equidad" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-white/10 flex items-center gap-1.5">
+            <i class="ph-bold ph-scales text-purple-400"></i>
+            <span class="hidden md:inline">Equidad</span>
+          </button>
+        </nav>
+
+        <a href="{{ url_for('logout') }}" title="Cerrar sesión protegida" class="p-2 sm:px-3 sm:py-1.5 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition flex items-center gap-1 text-xs border border-transparent hover:border-rose-500/20">
+          <i class="ph-bold ph-sign-out text-base"></i>
+          <span class="hidden xl:inline text-[11px] font-bold">Salir</span>
+        </a>
+      </div>
     </div>
   </header>
 

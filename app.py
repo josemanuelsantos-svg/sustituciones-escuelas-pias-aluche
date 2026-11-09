@@ -6,7 +6,7 @@ Colegio Nuestra Señora de las Escuelas Pías (Aluche) - Coordinación: Vero.
 import os
 import uuid
 from datetime import datetime, date, timedelta
-from flask import Flask, render_template, request, jsonify, Response, send_file, send_from_directory
+from flask import Flask, render_template, request, jsonify, Response, send_file, send_from_directory, session, redirect, url_for
 from models import Teacher, TimeSlot, ScheduleItem, SubstitutionRecord, ActivityType
 from database import Database
 from engine import SubstitutionEngine
@@ -14,6 +14,11 @@ from docx_service import generate_weekly_docx
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 app.config["JSON_AS_ASCII"] = False
+app.secret_key = os.environ.get("SECRET_KEY", "escuelas-pias-aluche-7eML-secret-2026")
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=90)
+
+# Clave de acceso oficial para proteger la aplicación
+APP_ACCESS_KEY = os.environ.get("APP_ACCESS_KEY", "7eML")
 
 db = Database()
 if len(db.get_teachers()) == 0:
@@ -23,6 +28,57 @@ if len(db.get_teachers()) == 0:
     except Exception as e:
         print(f"Aviso al inicializar datos de Escuelas Pías: {e}")
 engine = SubstitutionEngine(db)
+
+@app.before_request
+def check_authentication():
+    """Protege todas las rutas de la aplicación excepto login y recursos estáticos."""
+    # Permitir recursos estáticos, favicon y rutas de autenticación
+    if (
+        request.path.startswith("/static/")
+        or request.path == "/favicon.ico"
+        or request.endpoint in ("login", "api_login", "static")
+    ):
+        return None
+
+    if not session.get("authenticated"):
+        if request.path.startswith("/api/"):
+            return jsonify({"error": "No autorizado. Introduce la clave de acceso.", "requiere_clave": True}), 401
+        return redirect(url_for("login"))
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """Página de inicio de sesión protegida con la clave del centro (7eML)."""
+    if session.get("authenticated"):
+        return redirect(url_for("index"))
+
+    error = None
+    if request.method == "POST":
+        clave = request.form.get("clave", "").strip()
+        if clave == APP_ACCESS_KEY:
+            session.permanent = bool(request.form.get("recordar"))
+            session["authenticated"] = True
+            return redirect(url_for("index"))
+        else:
+            error = "Clave de acceso incorrecta. Por favor, compruébala."
+
+    return render_template("login.html", error=error)
+
+@app.route("/api/login", methods=["POST"])
+def api_login():
+    """Endpoint API para autenticación directa con JSON."""
+    data = request.json or {}
+    clave = data.get("clave", "").strip()
+    if clave == APP_ACCESS_KEY:
+        session.permanent = True
+        session["authenticated"] = True
+        return jsonify({"success": True})
+    return jsonify({"error": "Clave incorrecta"}), 401
+
+@app.route("/logout")
+def logout():
+    """Cierra la sesión y redirige a la pantalla de acceso."""
+    session.pop("authenticated", None)
+    return redirect(url_for("login"))
 
 @app.route("/favicon.ico")
 def favicon():
